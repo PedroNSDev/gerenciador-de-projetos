@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Projetos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen" class="container">
+    <div class="login-box">
+        <h2>Login</h2>
+
+        <div id="login-error" class="error">Credenciais inválidas</div>
+
+        <input id="username" placeholder="Usuário">
+        <input id="password" type="password" placeholder="Senha">
+
+        <button onclick="fazerLogin()">Entrar</button>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard-screen" class="container hidden">
+    <header>
+        <span id="display-name"></span>
+        <span id="display-level"></span>
+        <button onclick="fazerLogout()">Sair</button>
+    </header>
+
+    <div id="projetos-container"></div>
+
+    <div id="logs-container" class="hidden">
+        <h3>Logs</h3>
+        <div id="log-entries"></div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
