@@ -62,7 +62,7 @@
         .nav-logo span { color: var(--acc); }
         .nav-right { display: flex; align-items: center; gap: 10px; }
 
-        /* ── PROFILE ── */
+        /* ── PROFILE ─── */
         .profile-wrap { position: relative; }
         .profile-btn {
             display: flex; align-items: center; gap: 9px;
@@ -248,7 +248,7 @@
 
         .profile-modal-av { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 700; color: #fff; margin: 0 auto 12px; }
 
-        /* ── TOAST ── */
+        /* ── TOASTR ── */
         .toast-ctr { position: fixed; bottom: 22px; right: 22px; z-index: 3000; display: flex; flex-direction: column; gap: 7px; }
         .toast { background: var(--surface2); color: var(--text); padding: 10px 15px; border-radius: var(--rsm); font-size: .82rem; font-weight: 500; box-shadow: 0 8px 28px rgba(0,0,0,.4); animation: tIn .3s ease; border: 1px solid var(--border); border-left: 3px solid var(--ok); max-width: 290px; }
         .toast.warning { border-left-color: var(--warn); }
@@ -443,7 +443,10 @@ function renderEmpty() {
     </div>`;
 }
 
-function entrarWorkspace(wsId) { localStorage.setItem('fd-ws-id', wsId); window.location.href='index.html'; }
+async function entrarWorkspace(wsId) {
+    const { data: ws } = await sb.from('workspaces').select('codigo').eq('id', wsId).single();
+    if (ws) window.location.href = `workspace.html?codigo=${ws.codigo}`;
+}
 
 async function solicitarEntrada() {
     const code = document.getElementById('join-code').value.trim().toUpperCase();

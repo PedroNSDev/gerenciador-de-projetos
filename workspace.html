@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlowDesk - Workspace</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="check_login.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:#f0f4ff; --surface:#fff; --sidebar:#0f172a;
+            --acc:#4f46e5; --acc-lt:#eef2ff;
+            --text:#0f172a; --muted:#64748b; --border:#e2e8f0;
+            --ok:#10b981; --warn:#f59e0b; --danger:#ef4444;
+            --sh:0 1px 3px rgba(0,0,0,.07); --sh-md:0 4px 12px rgba(0,0,0,.1); --sh-lg:0 12px 32px rgba(0,0,0,.14);
+            --r:10px; --rsm:6px; --font:'Outfit',sans-serif; --mono:'JetBrains Mono',monospace;
+            --session-done:#d1fae5; --session-done-header:#10b981;
+        }
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
+        .hidden{display:none!important}
+
+        /* ── BUTTONS ── */
+        .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border:none;border-radius:12px;font-family:var(--font);font-weight:600;font-size:.88rem;cursor:pointer;transition:.2s;outline:none;position:relative;overflow:hidden}
+        .btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:.5s}
+        .btn:hover::before{left:100%}
+        .btn-p{background:linear-gradient(135deg,var(--acc),#6366f1);color:#fff;box-shadow:0 2px 8px rgba(79,70,229,.3)}
+        .btn-p:hover{background:linear-gradient(135deg,#6366f1,var(--acc));box-shadow:0 4px 16px rgba(79,70,229,.4);transform:translateY(-2px)}
+        .btn-p:active{transform:translateY(0);box-shadow:0 2px 8px rgba(79,70,229,.3)}
+        .btn-s{background:#fff;color:var(--text);border:2px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.05)}
+        .btn-s:hover{border-color:var(--acc);color:var(--acc);box-shadow:0 2px 8px rgba(79,70,229,.15);transform:translateY(-1px)}
+        .btn-s:active{transform:translateY(0)}
+        .btn-sm{padding:8px 14px;font-size:.8rem;border-radius:10px}
+        .btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+
+        /* ── FORMS ── */
+        .fg{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+        .fl{font-size:.85rem;font-weight:600;color:var(--text);margin-bottom:2px}
+        .fi,.fta,.fsel{width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:12px;font-family:var(--font);font-size:.88rem;color:var(--text);background:#fff;outline:none;transition:.2s;resize:vertical}
+        .fi:focus,.fta:focus,.fsel:focus{border-color:var(--acc);box-shadow:0 0 0 4px rgba(79,70,229,.1)}
+        .fta{min-height:100px}
+        .fsel{background:#fff url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%2364748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,9 12,15 18,9"></polyline></svg>') no-repeat right 12px center;background-size:16px}
+        .fhint{font-size:.78rem;color:var(--muted);margin-top:4px}
+        .err{font-size:.8rem;color:var(--danger);margin-top:4px;display:none}
+
+        /* ── APP SHELL ── */
+        #app{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
+
+        /* ── SIDEBAR ── */
+        .sidebar{background:var(--sidebar);padding:20px 13px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+        .sb-logo{font-size:1.2rem;font-weight:800;color:#fff;padding:4px 11px;margin-bottom:14px;letter-spacing:-.02em;cursor:pointer}
+        .sb-logo span{color:var(--acc)}
+        .ws-badge{background:rgba(255,255,255,.06);border-radius:var(--rsm);padding:10px 12px;margin-bottom:16px;display:flex;align-items:center;gap:9px}
+        .ws-icon{font-size:1.1rem;flex-shrink:0}
+        .ws-name{color:#fff;font-weight:700;font-size:.84rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .ws-code{color:#475569;font-size:.7rem;font-family:var(--mono)}
+        .sb-sec{font-size:.63rem;text-transform:uppercase;letter-spacing:.1em;color:#334155;padding:0 11px;margin-bottom:4px;font-weight:700}
+        .nav-btn{display:flex;align-items:center;gap:9px;width:100%;padding:9px 11px;border:none;background:transparent;color:#94a3b8;border-radius:var(--rsm);font-family:var(--font);font-size:.86rem;font-weight:500;cursor:pointer;transition:.15s;margin-bottom:2px;text-align:left}
+        .nav-btn:hover{background:rgba(255,255,255,.07);color:#fff} .nav-btn.active{background:var(--acc);color:#fff}
+        .ni{width:17px;text-align:center;flex-shrink:0}
+        .sb-div{border:none;border-top:1px solid #1e293b;margin:12px 0}
+        .sb-user{margin-top:auto;padding:11px;border-radius:var(--rsm);background:rgba(255,255,255,.05)}
+        .sb-user .un{color:#fff;font-weight:600;font-size:.86rem}
+        .sb-user .ur{color:#64748b;font-size:.73rem;margin-top:1px}
+        .sb-user .lb{margin-top:7px;color:#475569;font-size:.73rem;background:none;border:none;cursor:pointer;font-family:var(--font);padding:0}
+        .sb-user .lb:hover{color:var(--danger)}
+
+        /* ── MAIN ── */
+        .main{padding:26px 30px;overflow-y:auto}
+        .ph{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+        .pt{font-size:1.4rem;font-weight:700} .ps{color:var(--muted);font-size:.82rem;margin-top:2px}
+        .tab-c{display:none} .tab-c.active{display:block}
+
+        /* ── NOTICE ── */
+        .notice-wrap{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border-radius:var(--r);padding:13px 17px;margin-bottom:20px;display:flex;align-items:flex-start;gap:11px;box-shadow:0 4px 18px rgba(79,70,229,.3);animation:slideDown .25s ease}
+        @keyframes slideDown{from{opacity:0;transform:translateY(-7px)}to{opacity:1;transform:translateY(0)}}
+        .n-icon{font-size:1.05rem;flex-shrink:0;margin-top:1px} .n-text{flex:1}
+        .n-label{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.65;display:block;margin-bottom:2px}
+        .n-msg{font-size:.87rem;line-height:1.5}
+        .n-acts{display:flex;gap:5px;flex-shrink:0;align-self:center}
+
+        /* ── PROJECT CARD ── */
+        .proj-card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--sh);margin-bottom:13px;overflow:hidden}
+        .proj-card.done{background:var(--session-done);border-color:var(--session-done-header)}
+        .proj-hdr{display:flex;justify-content:space-between;align-items:center;padding:15px 19px;cursor:pointer;transition:background .1s}
+        .proj-hdr:hover{background:#f8fafc}
+        .proj-hdr.done{background:var(--session-done-header);color:#fff}
+        .proj-hdr.done:hover{background:var(--session-done-header)}
+        .proj-name{font-weight:700;font-size:1.05rem;display:flex;align-items:center;gap:10px;flex:1;padding:8px 0}
+        .proj-body{padding:0 19px 17px;border-top:1px solid var(--border)}
+        .proj-desc{font-size:.8rem;color:var(--muted);padding:10px 0 7px}
+        .sess-box{background:#f8fafc;border:1px solid var(--border);border-radius:var(--rsm);margin-bottom:9px;overflow:hidden}
+        .sess-box.done{background:var(--session-done);border-color:var(--session-done-header)}
+        .sess-hdr.done{background:var(--session-done-header);color:#fff}
+        .sess-hdr{display:flex;justify-content:space-between;align-items:center;padding:9px 13px;cursor:pointer;transition:background .1s}
+        .sess-hdr:hover{background:#f1f5f9}
+        .sess-name{font-weight:600;font-size:.87rem;display:flex;align-items:center;gap:6px}
+        .sess-body{padding:9px 13px 13px}
+        .step-item{background:#fff;border:1px solid var(--border);border-radius:var(--rsm);padding:10px 12px;margin-bottom:6px;display:flex;align-items:flex-start;gap:10px;transition:box-shadow .15s}
+        .step-item:hover{box-shadow:var(--sh)}
+        .step-item.done{background:var(--session-done);border-color:var(--session-done-header)}
+        .step-item.done .step-bar{background:var(--session-done-header)!important}
+        .step-acts{display:flex;gap:6px;align-items:center;margin-left:auto}
+        .step-sel{font-size:.75rem;padding:4px 6px;border:1px solid var(--border);border-radius:4px;background:#fff}
+
+        /* ── BADGES ── */
+        .badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:.7rem;font-weight:600;white-space:nowrap}
+        .b-gray{background:#f1f5f9;color:#64748b} .b-amber{background:#fef3c7;color:#92400e}
+        .b-green{background:#dcfce7;color:#166534} .b-acc{background:var(--acc-lt);color:var(--acc)}
+        .b-purple{background:#ede9fe;color:#5b21b6} .b-rose{background:#fce7f3;color:#9d174d}
+        .colab-list{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px}
+        .colab-chip{padding:3px 9px;border-radius:20px;background:#eef2ff;color:var(--acc);font-size:.73rem;font-weight:500}
+        .chev{font-size:.63rem;color:var(--muted);transition:transform .2s;display:inline-block}
+        .chev.open{transform:rotate(90deg)}
+
+        /* ── CONTRIBUTORS ── */
+        .contrib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:13px}
+        .contrib-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:var(--sh);cursor:pointer;transition:.15s;text-align:center}
+        .contrib-card:hover{box-shadow:var(--sh-md);transform:translateY(-2px);border-color:#c7d2fe}
+        .contrib-av{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.15rem;font-weight:700;color:#fff;margin:0 auto 10px}
+        .contrib-name{font-weight:700;font-size:.9rem} .contrib-user{color:var(--muted);font-size:.76rem;margin-top:1px}
+        .contrib-meta{margin-top:8px;display:flex;justify-content:center;gap:5px;flex-wrap:wrap}
+
+        /* ── CONTRIBUTOR POPUP ── */
+        .cpop-ov{position:fixed;inset:0;background:rgba(15,23,42,.4);backdrop-filter:blur(3px);z-index:900;display:flex;align-items:center;justify-content:center;padding:20px}
+        .cpop-card{background:var(--surface);border-radius:14px;width:100%;max-width:370px;box-shadow:var(--sh-lg);animation:popIn .2s ease;overflow:hidden}
+        @keyframes popIn{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
+        .cpop-hdr{padding:18px 18px 13px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+        .cpop-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;color:#fff;flex-shrink:0}
+        .cpop-info .cn{font-weight:700;font-size:.95rem} .cpop-info .cu{color:var(--muted);font-size:.76rem}
+        .cpop-body{padding:13px 18px 18px;max-height:290px;overflow-y:auto}
+        .cpop-sec{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:9px}
+        .cpop-proj{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--rsm);border:1px solid var(--border);margin-bottom:6px;font-size:.84rem;font-weight:500}
+        .cpop-proj:last-child{margin-bottom:0}
+        .cpop-x{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.05rem;width:26px;height:26px;border-radius:5px;display:flex;align-items:center;justify-content:center}
+        .cpop-x:hover{background:var(--bg)}
+
+        /* ── LOGS ── */
+        .logs-panel{background:#0d1117;border-radius:var(--r);padding:18px;font-family:var(--mono);font-size:.77rem;color:#8b949e;max-height:500px;overflow-y:auto;line-height:1.65}
+        .log-e{padding:4px 0;border-bottom:1px solid #161b22} .log-e:last-child{border-bottom:none}
+        .lt{color:#3fb950} .lu{color:#58a6ff} .lm{color:#f0f6fc}
+
+        /* ── NOTES ── */
+        .notes-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+        .notes-top .btn{padding:10px 16px}
+        .notes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+        .note-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.08);display:flex;flex-direction:column;gap:14px;cursor:pointer;transition:.2s;min-height:180px}
+        .note-card:hover{transform:translateY(-3px);border-color:#c7d2fe;box-shadow:0 4px 16px rgba(79,70,229,.15)}
+        .note-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+        .note-title{font-weight:700;font-size:1.05rem;line-height:1.3;color:var(--text);min-height:48px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+        .note-meta{font-size:.75rem;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap}
+        .note-content{color:var(--text);font-size:.88rem;line-height:1.5;max-height:140px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+        .note-att{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+        .note-img{width:100%;border-radius:12px;object-fit:cover;max-height:150px;border:1px solid var(--border)}
+        .note-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:auto}
+        .note-empty{text-align:center;padding:50px 20px;color:var(--muted);background:var(--surface);border-radius:14px;border:2px dashed var(--border)}
+        .note-empty .ei{font-size:3rem;margin-bottom:12px}
+        .note-attach{margin-top:10px;border-radius:12px;overflow:hidden;border:1px solid var(--border)}
+        .note-attach img{width:100%;display:block;max-height:120px;object-fit:cover}
+        .file-preview{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
+        .file-preview img{width:90px;height:90px;object-fit:cover;border-radius:12px;border:2px solid var(--border);transition:.15s}
+        .file-preview img:hover{border-color:var(--acc)}
+
+        /* ── MODAL ── */
+        .modal-ov{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(5px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
+        .modal-box{background:#fff;border-radius:14px;width:100%;max-width:460px;box-shadow:var(--sh-lg);animation:mIn .2s ease}
+        @keyframes mIn{from{opacity:0;transform:scale(.94) translateY(-10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+        .m-hdr{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+        .m-title{font-weight:700;font-size:.95rem}
+        .m-x{background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.05rem;width:26px;height:26px;border-radius:5px;display:flex;align-items:center;justify-content:center}
+        .m-x:hover{background:var(--bg)}
+        .m-body{padding:18px 22px;max-height:62vh;overflow-y:auto}
+        .m-foot{padding:13px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:7px}
+
+        /* ── TOAST ── */
+        .toast-ctr{position:fixed;bottom:20px;right:20px;z-index:2000;display:flex;flex-direction:column;gap:6px}
+        .toast{background:#1e293b;color:#fff;padding:10px 15px;border-radius:var(--rsm);font-size:.83rem;box-shadow:var(--sh-md);animation:tIn .3s ease;border-left:3px solid var(--ok);max-width:290px}
+        .toast.error{border-left-color:var(--danger)} .toast.warning{border-left-color:var(--warn)}
+        @keyframes tIn{from{opacity:0;transform:translateX(110%)}to{opacity:1;transform:translateX(0)}}
+
+        /* ── MISC ── */
+        .empty-state{text-align:center;padding:46px 20px;color:var(--muted)}
+        .ei{font-size:2.3rem;margin-bottom:11px} .empty-state h3{font-weight:600;margin-bottom:4px} .empty-state p{font-size:.82rem}
+        .spinner{display:inline-block;width:19px;height:19px;border:2px solid var(--border);border-top-color:var(--acc);border-radius:50%;animation:spin .6s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .loading-c{text-align:center;padding:54px 20px;color:var(--muted)}
+        .code-box{background:#f1f5f9;border-radius:var(--rsm);padding:12px 15px;font-family:var(--mono);font-size:1.2rem;font-weight:700;letter-spacing:.18em;color:var(--acc);text-align:center;margin:10px 0}
+        .n-hint{font-size:.77rem;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:var(--rsm);padding:7px 13px;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+    </style>
+</head>
+<body>
+
+<!-- ═══════════ APP ═══════════ -->
+<div id="app" class="hidden">
+    <nav class="sidebar">
+        <div class="sb-logo" onclick="window.location.href='homepage.html'">Flow<span>Desk</span></div>
+        <div class="ws-badge">
+            <span class="ws-icon">🏢</span>
+            <div style="overflow:hidden;flex:1">
+                <div class="ws-name" id="sb-ws-name">—</div>
+                <div class="ws-code" id="sb-ws-code">—</div>
+            </div>
+        </div>
+
+        <div class="sb-sec">Principal</div>
+        <button id="nav-projetos"       class="nav-btn active" onclick="switchTab('projetos')"><span class="ni">📁</span> Projetos</button>
+        <button id="nav-contribuidores" class="nav-btn"        onclick="switchTab('contribuidores')"><span class="ni">👥</span> Contribuidores</button>
+        <button id="nav-anotacoes"      class="nav-btn"        onclick="switchTab('anotacoes')"><span class="ni">📝</span> Anotações</button>
+        <button id="nav-logs"           class="nav-btn hidden" onclick="switchTab('logs')"><span class="ni">📋</span> System Logs</button>
+
+        <hr class="sb-div">
+
+        <div id="admin-section" class="hidden">
+            <div class="sb-sec">Admin</div>
+            <button class="nav-btn" onclick="abrirModalAviso()"><span class="ni">📌</span> Recado Fixado</button>
+            <button class="nav-btn" onclick="abrirModalAddMembro()"><span class="ni">➕</span> Adicionar Membro</button>
+        </div>
+
+        <div class="sb-user">
+            <div class="un" id="sb-uname">—</div>
+            <div class="ur" id="sb-urole">—</div>
+            <button class="lb" onclick="fazerLogout()">→ Sair da conta</button>
+        </div>
+    </nav>
+
+    <main class="main">
+        <!-- PROJETOS -->
+        <div id="tab-projetos" class="tab-c active">
+            <div class="ph">
+                <div><div class="pt">Projetos</div><div class="ps">Projetos do workspace atual</div></div>
+                <button id="btn-novo-proj" class="btn btn-p hidden" onclick="abrirModalProjeto()">+ Novo Projeto</button>
+            </div>
+            <div id="pinned-notice"></div>
+            <div id="projetos-container">
+                <div class="loading-c"><div class="spinner"></div><p style="margin-top:11px">Carregando...</p></div>
+            </div>
+        </div>
+
+        <!-- CONTRIBUIDORES -->
+        <div id="tab-contribuidores" class="tab-c">
+            <div class="ph">
+                <div><div class="pt">Contribuidores</div><div class="ps">Membros deste workspace — clique para ver projetos</div></div>
+            </div>
+            <div id="contrib-container"><div class="loading-c"><div class="spinner"></div></div></div>
+        </div>
+
+        <!-- ANOTAÇÕES -->
+        <div id="tab-anotacoes" class="tab-c">
+            <div class="ph"><div><div class="pt">Minhas Anotações</div><div class="ps">Salvas localmente no navegador</div></div></div>
+            <div class="notes-top">
+                <div style="font-size:.95rem;color:var(--muted)">Organize ideias, lembretes e anexos por workspace.</div>
+                <button class="btn btn-p" onclick="abrirModalNota()">+ Nova Nota</button>
+            </div>
+            <div id="anotacoes-container" class="notes-grid">
+                <div class="note-empty"><div class="ei">🗒️</div> Nenhuma nota ainda. Crie sua primeira nota.</div>
+            </div>
+        </div>
+
+        <!-- LOGS -->
+        <div id="tab-logs" class="tab-c">
+            <div class="ph">
+                <div><div class="pt">System Logs</div><div class="ps">Histórico de atividades</div></div>
+                <button class="btn btn-s btn-sm" onclick="carregarLogs()">↺ Atualizar</button>
+            </div>
+            <div id="logs-panel" class="logs-panel"><div style="color:#475569">Carregando...</div></div>
+        </div>
+    </main>
+</div>
+
+<!-- ═══════════ CONTRIBUTOR POPUP ═══════════ -->
+<div id="cpop-ov" class="cpop-ov hidden" onclick="if(event.target.id==='cpop-ov')fecharCpop()">
+    <div class="cpop-card">
+        <div class="cpop-hdr">
+            <div class="cpop-av" id="cpop-av"></div>
+            <div class="cpop-info">
+                <div class="cn" id="cpop-name">—</div>
+                <div class="cu" id="cpop-user">—</div>
+            </div>
+            <div style="margin-left:auto;display:flex;align-items:center;gap:5px" id="cpop-badges"></div>
+            <button class="cpop-x" onclick="fecharCpop()">✕</button>
+        </div>
+        <div class="cpop-body">
+            <div class="cpop-sec">Projetos neste workspace</div>
+            <div id="cpop-projs"><div class="spinner"></div></div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal-ov" class="modal-ov hidden" onclick="if(event.target.id==='modal-ov')fecharModal()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="m-hdr"><div class="m-title" id="m-title">—</div><button class="m-x" onclick="fecharModal()">✕</button></div>
+        <div class="m-body" id="m-body"></div>
+        <div class="m-foot" id="m-foot"></div>
+    </div>
+</div>
+
+<div class="toast-ctr" id="toast-ctr"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//   Cliente Supabase carregado de check_login.js
+// ═══════════════════════════════════════════════════
+
+let currentUser = null, currentWorkspace = null, currentWorkspaceCreatorId = null;
+let wsMembers = [];    // { id, nome, username, nivel, wsAdmin }
+let wsProjetos = [];   // cache dos projetos do workspace
+let avisoAtivo = null;
+let currentUserCanEdit = false;
+let currentUserIsWorkspaceAdmin = false;
+let notes = [];
+let pendingNoteAttachments = [];
+const NOTES_KEY_BASE = 'fd-notes';
+function notesStorageKey() { return `${NOTES_KEY_BASE}-${currentWorkspace?.codigo||'global'}`; }
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // Carregar workspace do URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const wsCode = urlParams.get('codigo');
+    if (!wsCode) {
+        alert('Código do workspace não encontrado.');
+        window.location.href = 'index.html';
+        return;
+    }
+
+    const userId = localStorage.getItem('fd-user-id');
+    if (!userId) {
+        window.location.href = 'index.html';
+        return;
+    }
+
+    const { data: user } = await sb.from('usuarios').select('*').eq('id', userId).single();
+    if (!user) {
+        localStorage.removeItem('fd-user-id');
+        window.location.href = 'index.html';
+        return;
+    }
+    currentUser = user;
+
+    const { data: ws } = await sb.from('workspaces').select('*').eq('codigo', wsCode).single();
+    if (!ws) {
+        alert('Workspace não encontrado.');
+        window.location.href = 'index.html';
+        return;
+    }
+
+    // Verificar se usuário é membro
+    const { data: membership } = await sb.from('workspace_usuarios').select('role').eq('workspace_id', ws.id).eq('usuario_id', user.id).maybeSingle();
+    if (!membership) {
+        alert('Você não tem acesso a este workspace.');
+        window.location.href = 'index.html';
+        return;
+    }
+
+    currentWorkspace = ws;
+    currentWorkspaceCreatorId = ws.criado_por;
+    document.getElementById('app').classList.remove('hidden');
+    await entrarNoDashboard();
+});
+
+// ─── DASHBOARD ──────────────────────────────
+async function entrarNoDashboard() {// USUARIO PAINELZIN
+    const nlTxt = { 0:'Visitante', 1:'Colaborador', 2:'Administrador' };
+    document.getElementById('sb-uname').textContent  = currentUser.nome;
+    document.getElementById('sb-urole').textContent  = `${nlTxt[currentUser.nivel]||'Usuário'}`;
+    document.getElementById('sb-ws-name').textContent = currentWorkspace.nome;
+    document.getElementById('sb-ws-code').textContent = `#${currentWorkspace.codigo}`;
+
+    const { data: memberships } = await sb.from('workspace_usuarios').select('usuario_id, role').eq('workspace_id', currentWorkspace.id);
+    const memberIds = memberships.map(m => m.usuario_id);
+    const membership = memberships.find(m => m.usuario_id === currentUser.id);
+    currentUserIsWorkspaceAdmin = membership?.role === 'admin';
+    currentUserCanEdit = membership?.role === 'member' || membership?.role === 'admin';
+    if (currentUserCanEdit) document.getElementById('btn-novo-proj').classList.remove('hidden');
+    if (currentUserIsWorkspaceAdmin || currentUser.nivel === 2) {
+        document.getElementById('nav-logs').classList.remove('hidden');
+        document.getElementById('admin-section').classList.remove('hidden');
+    }
+
+    const { data: users } = await sb.from('usuarios').select('*').in('id', memberIds);
+    wsMembers = (users || []).map(u => {
+        const membership = memberships.find(m => m.usuario_id === u.id);
+        return { ...u, wsAdmin: membership?.role === 'admin', wsRole: membership?.role || 'member' };
+    });
+
+    await carregarAviso();
+    await renderizarProjetos();
+    carregarNotas();
+}
+
+// ─── TABS─────────────────────────────────────
+function switchTab(tab) {
+    ['projetos','contribuidores','anotacoes','logs'].forEach(t => {
+        const c = document.getElementById(`tab-${t}`);
+        const b = document.getElementById(`nav-${t}`);
+        if (c) c.classList.toggle('active', t===tab);
+        if (b) b.classList.toggle('active', t===tab);
+    });
+    if (tab==='contribuidores') renderContribuidor();
+    if (tab==='logs') carregarLogs();
+}
+
+// ─── LOGOUT ──────────────────────────────────────
+function fazerLogout() {
+    currentUser = currentWorkspace = null; wsMembers = []; wsProjetos = [];
+    localStorage.removeItem('fd-user-id');
+    window.location.href = 'index.html';    
+}
+
+// ─── PINNED NOTICE ───────────────────────────────
+async function carregarAviso() {
+    const { data } = await sb.from('avisos').select('*')
+        .eq('ativo', true).eq('workspace_id', currentWorkspace.id)
+        .order('created_at', { ascending: false }).limit(1).maybeSingle();
+    avisoAtivo = data; renderizarAviso();
+}
+
+function renderizarAviso() {
+    const el = document.getElementById('pinned-notice');
+    if (!avisoAtivo) { el.innerHTML = ''; return; }
+    const adm = currentUser?.nivel === 2;
+    el.innerHTML = `<div class="notice-wrap">
+        <span class="n-icon">📌</span>
+        <div class="n-text">
+            <span class="n-label">Recado do Administrador</span>
+            <span class="n-msg">${escH(avisoAtivo.mensagem)}</span>
+        </div>
+        ${adm ? `<div class="n-acts">
+            <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff;border:none" onclick="abrirModalAviso()">✏</button>
+            <button class="btn btn-sm" style="background:rgba(255,255,255,.12);color:#fff;border:none" onclick="desativarAviso()">✕</button>
+        </div>` : ''}
+    </div>`;
+}
+
+function abrirModalAviso() {
+    abrirModal('📌 Recado Fixado', `
+        <div class="fg"><label class="fl">Mensagem para todos os membros</label>
+            <textarea id="m-aviso-txt" class="fta" style="min-height:110px"
+                placeholder="Ex: Sistema em manutenção às 22h...">${escH(avisoAtivo?.mensagem||'')}</textarea></div>
+        ${avisoAtivo ? '<div class="n-hint">⚠ Existe um recado ativo. Salvar irá substituí-lo.</div>' : ''}
+        <p class="fhint">Aparecerá em destaque para todos os membros do workspace.</p>
+    `, [
+        { label: '💾 Publicar', cls: 'btn-p', action: 'salvarAviso()' },
+        { label: 'Cancelar', cls: 'btn-s', action: 'fecharModal()' }
+    ]);
+}
+
+async function salvarAviso() {
+    const msg = document.getElementById('m-aviso-txt')?.value?.trim();
+    if (!msg) { toast('Digite uma mensagem.', 'warning'); return; }
+    await sb.from('avisos').update({ ativo: false }).eq('workspace_id', currentWorkspace.id).eq('ativo', true);
+    await sb.from('avisos').insert({ mensagem: msg, ativo: true, criado_por: currentUser.id, workspace_id: currentWorkspace.id });
+    fecharModal(); await carregarAviso(); await addLog('Publicou um recado fixado'); toast('Recado publicado! 📌');
+}
+
+async function desativarAviso() {
+    await sb.from('avisos').update({ ativo: false }).eq('id', avisoAtivo.id);
+    avisoAtivo = null; renderizarAviso(); await addLog('Removeu o recado fixado'); toast('Recado removido.');
+}
+
+// ─── RENDER PROJECTS ─────────────────────────────
+async function renderizarProjetos() {
+    const c = document.getElementById('projetos-container');
+    c.innerHTML = `<div class="loading-c"><div class="spinner"></div><p style="margin-top:10px">Carregando...</p></div>`;
+    const { data: projs, error } = await sb.from('projetos')
+        .select(`id, nome, descricao,
+            projeto_usuarios(usuario_id),
+            sessoes(id, nome, descricao,
+                sessao_usuarios(usuario_id),
+                etapas(id, nome, descricao, status, responsavel_id, prioridade))`)
+        .eq('workspace_id', currentWorkspace.id).order('id');
+    wsProjetos = projs || [];
+    if (error) { c.innerHTML=`<div class="empty-state"><div class="ei">⚠️</div><h3>Erro</h3><p>${escH(error.message)}</p></div>`; return; }
+    if (!projs?.length) { c.innerHTML=`<div class="empty-state"><div class="ei">📁</div><h3>Nenhum projeto ainda</h3><p>Clique em "+ Novo Projeto" para começar.</p></div>`; return; }
+    c.innerHTML = projs.map(renderProj).join('');
+}
+
+function renderProj(p) {
+    const total = (p.sessoes||[]).reduce((a,s) => a+(s.etapas||[]).length, 0);
+    const allSessionsComplete = (p.sessoes||[]).length > 0 && (p.sessoes||[]).every(s => (s.etapas||[]).length > 0 && (s.etapas||[]).every(e => e.status === 'Concluído'));
+    const doneClass = allSessionsComplete ? ' done' : '';
+    return `<div class="proj-card${doneClass}">
+        <div class="proj-hdr${doneClass}" onclick="toggleSec('pb-${p.id}','pc-${p.id}')">
+            <span class="chev open" id="pc-${p.id}" style="font-size:1.1rem;flex-shrink:0">▶</span>
+            <div class="proj-name">${escH(p.nome)}</div>
+            <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+                <span class="badge b-acc">${(p.sessoes||[]).length} seções</span>
+                <span class="badge b-gray">${total} etapas</span>
+                ${currentUserCanEdit ? `<button class="btn btn-s btn-sm" onclick="event.stopPropagation(); editarProjeto(${p.id})">✏</button>` : ''}
+            </div>
+        </div>
+        <div id="pb-${p.id}" class="proj-body">
+            ${p.descricao ? `<p class="proj-desc">${escH(p.descricao)}</p>` : ''}
+            ${(p.sessoes||[]).map(s => renderSess(p.id, s)).join('')}
+            ${currentUserCanEdit ? `<button class="btn btn-s btn-sm" onclick="abrirModalSessao(${p.id})">+ Seção</button>` : ''}
+        </div>
+    </div>`;
+}
+
+function renderSess(pId, s) {
+    const colabs = (s.sessao_usuarios||[]).map(su => {
+        const u = wsMembers.find(x => x.id===su.usuario_id);
+        return u ? `<span class="colab-chip">${escH(u.nome)}</span>` : '';
+    }).join('');
+    const allDone = (s.etapas||[]).length > 0 && (s.etapas||[]).every(e => e.status === 'Concluído');
+    const doneClass = allDone ? ' done' : '';
+    return `<div class="sess-box${doneClass}">
+        <div class="sess-hdr${doneClass}" onclick="toggleSec('sb-${s.id}','sc-${s.id}')">
+            <div class="sess-name"><span>🗂</span> ${escH(s.nome)}</div>
+            <div style="display:flex;align-items:center;gap:7px">
+                <span class="badge b-gray">${(s.etapas||[]).length} etapas</span>
+                <span class="chev open" id="sc-${s.id}">▶</span>
+            </div>
+        </div>
+        <div id="sb-${s.id}" class="sess-body">
+            ${colabs ? `<div class="colab-list">${colabs}</div>` : ''}
+            <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+                ${currentUserCanEdit ? `<button class="btn btn-s btn-sm" onclick="editarSessao(${s.id}, ${pId})">✏ Editar</button>` : ''}
+            </div>
+            ${(s.etapas||[]).map(e => renderEtapa(pId, s.id, e)).join('')}
+            ${currentUserCanEdit ? `<button class="btn btn-s btn-sm" style="margin-top:5px" onclick="abrirModalEtapa(${pId}, ${s.id})">+ Etapa</button>` : ''}
+        </div>
+    </div>`;
+}
+
+function renderEtapa(pId, sId, e) {
+    const resp = wsMembers.find(u => u.id === e.responsavel_id);
+    const prioOptions = [0,1,2,3,4].map(p => `<option value="${p}" ${e.prioridade==p?'selected':''}>${p}</option>`).join('');
+    const statusOptions = ['Não iniciado','Em andamento','Concluído'].map(s => `<option value="${s}" ${e.status==s?'selected':''}>${s}</option>`).join('');
+    const doneClass = e.status === 'Concluído' ? ' done' : '';
+    return `<div class="step-item${doneClass}">
+        <div class="step-bar" style="background:${e.status==='Concluído'?'var(--ok)':e.status==='Em andamento'?'var(--warn)':'var(--muted)'}"></div>
+        <div class="step-info">
+            <div class="step-name">${escH(e.nome)}</div>
+            ${e.descricao ? `<div class="step-desc">${escH(e.descricao)}</div>` : ''}
+            <div class="step-meta">
+                ${resp ? `<span class="badge b-purple">${escH(resp.nome)}</span>` : ''}
+            </div>
+        </div>
+        <div class="step-acts">
+            <select class="fsel step-sel" onchange="updateEtapaPrio(${e.id}, this.value)">
+                ${prioOptions}
+            </select>
+            <select class="fsel step-sel" onchange="updateEtapaStatus(${e.id}, this.value)">
+                ${statusOptions}
+            </select>
+            ${currentUserCanEdit ? `<button class="btn btn-sm" onclick="editarEtapa(${e.id})">✏</button>` : ''}
+        </div>
+    </div>`;
+}
+
+function toggleSec(bodyId, chevId) {
+    const body = document.getElementById(bodyId);
+    const chev = document.getElementById(chevId);
+    if (body.style.display === 'none') {
+        body.style.display = 'block'; chev.classList.add('open');
+    } else {
+        body.style.display = 'none'; chev.classList.remove('open');
+    }
+}
+
+// ─── CRUD PROJETOS ───────────────────────────────
+function abrirModalProjeto() {
+    abrirModal('📁 Novo Projeto', `
+        <div class="fg"><label class="fl">Nome</label><input id="m-pnome" class="fi" placeholder="Ex: Sistema ERP..."/></div>
+        <div class="fg"><label class="fl">Descrição</label><textarea id="m-pdesc" class="fta" placeholder="Descreva o projeto..."></textarea></div>
+    `, [
+        { label: '+ Criar', cls: 'btn-p', action: 'criarProjeto()' },
+        { label: 'Cancelar', cls: 'btn-s', action: 'fecharModal()' }
+    ]);
+}
+
+async function criarProjeto() {
+    const nome = document.getElementById('m-pnome')?.value?.trim();
+    const desc = document.getElementById('m-pdesc')?.value?.trim() || '';
+    if (!nome) { toast('Informe o nome.', 'warning'); return; }
+    const { data, error } = await sb.from('projetos')
+        .insert({ nome, descricao: desc, workspace_id: currentWorkspace.id }).select().single();
+    if (error) { toast('Erro: '+error.message, 'error'); return; }
+    await sb.from('projeto_usuarios').insert({ projeto_id: data.id, usuario_id: currentUser.id });
+    await addLog(`Criou projeto: ${nome}`);
+    fecharModal(); toast(`Projeto "${nome}" criado! 🎉`); await renderizarProjetos();
+}
+
+// ─── CRUD SEÇÕES───────────────────────────────
+function abrirModalSessao(pId) {
+    const opts = wsMembers.map(u => `<option value="${u.id}">${escH(u.nome)} (${u.username})</option>`).join('');
+    abrirModal('🗂 Nova Seção', `
+        <div class="fg"><label class="fl">Nome</label><input id="m-snome" class="fi" placeholder="Ex: Frontend..."/></div>
+        <div class="fg"><label class="fl">Descrição</label><input id="m-sdesc" class="fi" placeholder="Breve descrição..."/></div>
+        <div class="fg"><label class="fl">Colaboradores</label>
+            <select id="m-susers" class="fsel" multiple>${opts}</select>
+            <p class="fhint">Ctrl/Cmd para múltiplos.</p></div>
+    `, [
+        { label: '+ Criar', cls: 'btn-p', action: `criarSessao(${pId})` },
+        { label: 'Cancelar', cls: 'btn-s', action: 'fecharModal()' }
+    ]);
+}
+
+async function criarSessao(pId) {
+    const nome = document.getElementById('m-snome')?.value?.trim();
+    const desc = document.getElementById('m-sdesc')?.value?.trim() || '';
+    const sel  = Array.from(document.getElementById('m-susers')?.selectedOptions||[]).map(o=>+o.value);
+    if (!nome) { toast('Informe o nome.', 'warning'); return; }
+    const { data, error } = await sb.from('sessoes').insert({ projeto_id: pId, nome, descricao: desc }).select().single();
+    if (error) { toast('Erro: '+error.message, 'error'); return; }
+    const users = [...new Set([currentUser.id, ...sel])];
+    await sb.from('sessao_usuarios').insert(users.map(uid => ({ sessao_id: data.id, usuario_id: uid })));
+    await addLog(`Criou seção: ${nome}`);
+    fecharModal(); toast(`Seção "${nome}" criada!`); await renderizarProjetos();
+}
+
+// ─── CRUD ETAPAS ─────────────────────────────────
+function uSelect(id, selId=null) {
+    const opts = wsMembers.map(u =>
+        `<option value="${u.id}" ${selId==u.id?'selected':''}>${escH(u.nome)} (${u.username})</option>`).join('');
+    return `<select id="${id}" class="fsel" style="height:auto"><option value="">— Sem responsável —</option>${opts}</select>`;
+}
+
+function abrirModalEtapa(pId, sId, e=null) {
+    const title = e ? '✏ Editar Etapa' : '✅ Nova Etapa';
+    const nome = e?.nome || '';
+    const desc = e?.descricao || '';
+    const resp = e?.responsavel_id || '';
+    const status = e?.status || 'Não iniciado';
+    const prio = e?.prioridade || 0;
+    abrirModal(title, `
+        <div class="fg"><label class="fl">Nome</label><input id="m-enome" class="fi" value="${escH(nome)}" placeholder="Ex: Implementar tela de login..."/></div>
+        <div class="fg"><label class="fl">Descrição</label><input id="m-edesc" class="fi" value="${escH(desc)}" placeholder="Critérios de aceite..."/></div>
+        <div class="fg"><label class="fl">Responsável</label>${uSelect('m-eresp', resp)}</div>
+        <div class="fg"><label class="fl">Status</label><select id="m-estatus" class="fsel">
+            <option value="Não iniciado" ${status==='Não iniciado'?'selected':''}>Não iniciado</option>
+            <option value="Em andamento" ${status==='Em andamento'?'selected':''}>Em andamento</option>
+            <option value="Concluído" ${status==='Concluído'?'selected':''}>Concluído</option>
+        </select></div>
+        <div class="fg"><label class="fl">Prioridade (0-4)</label><select id="m-eprio" class="fsel">
+            <option value="0" ${prio==0?'selected':''}>0 - Baixa</option>
+            <option value="1" ${prio==1?'selected':''}>1</option>
+            <option value="2" ${prio==2?'selected':''}>2</option>
+            <option value="3" ${prio==3?'selected':''}>3</option>
+            <option value="4" ${prio==4?'selected':''}>4 - Alta</option>
+        </select></div>
+    `, [
+        { label: e ? 'Salvar' : '+ Criar', cls: 'btn-p', action: e ? `editarEtapaSave(${e.id})` : `criarEtapa(${pId}, ${sId})` },
+        { label: 'Cancelar', cls: 'btn-s', action: 'fecharModal()' }
+    ]);
+}
+
+async function criarEtapa(pId, sId) {
+    const nome = document.getElementById('m-enome')?.value?.trim();
+    const desc = document.getElementById('m-edesc')?.value?.trim() || '';
+    const resp = document.getElementById('m-eresp')?.value || null;
+    const status = document.getElementById('m-estatus')?.value || 'Não iniciado';
+    const prio = +document.getElementById('m-eprio')?.value || 0;
+    if (!nome) { toast('Informe o nome.', 'warning'); return; }
+    const { data, error } = await sb.from('etapas').insert({
+        sessao_id: sId, nome, descricao: desc, responsavel_id: resp, status, prioridade: prio
+    }).select().single();
+    if (error) { toast('Erro: '+error.message, 'error'); return; }
+    await addLog(`Criou etapa: ${nome}`);
+    fecharModal(); toast(`Etapa "${nome}" criada!`); await renderizarProjetos();
+}
+
+function editarEtapa(eId) {
+    // Buscar etapa
+    let etapa = null;
+    for (const p of wsProjetos) {
+        for (const s of p.sessoes || []) {
+            etapa = (s.etapas || []).find(e => e.id === eId);
+            if (etapa) break;
+        }
+        if (etapa) break;
+    }
+    if (!etapa) return;
+    abrirModalEtapa(null, null, etapa);
+}
+
+async function editarEtapaSave(eId) {
+    const nome = document.getElementById('m-enome')?.value?.trim();
+    const desc = document.getElementById('m-edesc')?.value?.trim() || '';
+    const resp = document.getElementById('m-eresp')?.value || null;
+    const status = document.getElementById('m-estatus')?.value || 'Não iniciado';
+    const prio = +document.getElementById('m-eprio')?.value || 0;
+    if (!nome) { toast('Informe o nome.', 'warning'); return; }
+    const { error } = await sb.from('etapas').update({
+        nome, descricao: desc, responsavel_id: resp, status, prioridade: prio
+    }).eq('id', eId);
+    if (error) { toast('Erro: '+error.message, 'error'); return; }
+    await addLog(`Editou etapa: ${nome}`);
+    fecharModal(); toast('Etapa atualizada!'); await renderizarProjetos();
+}
+// ─── EDITAR/DELETAR PROJETOS ──────────────────
+async function editarProjeto(projId) {
+    const proj = wsProjetos.find(p => p.id === projId);
+    if (!proj) return;
+    const buttons = [
+        { label: '💾 Salvar', cls: 'btn-p', action: `salvarEdicaoProjeto(${projId})` },
+        { label: 'Cancelar', cls: 'btn-s', action: 'fecharModal()' }
+    ];
+    if (currentUserIsWorkspaceAdmin) {
+        buttons.push({ label: '🗑 Deletar Projeto', cls: 'btn-s', style: 'border-color:var(--danger);color:var(--danger)', action: `deletarProjetoConfirm(${projId})` });
+    }
+    abrirModal('✏ Editar Projeto', `
+        <div class="fg"><label class="fl">Nome</label><input id="m-pnome-edit" class="fi" value="${escH(proj.nome)}"/></div>
+        <div class="fg"><label class="fl">Descrição</label><textarea id="m-pdesc-edit" class="fta">${escH(proj.descricao||'')}</textarea></div>
+    `, buttons);
+}
+
+async function salvarEdicaoProjeto(projId) {
+    const nome = document.getElementById('m-pnome-edit')?.value?.trim();
+    const desc = document.getElementById('m-pdesc-edit')?.value?.trim() || '';
+    if (!nome) { toast('Informe o nome.', 'warning'); return; }
+    const { error } = await sb.from('projetos').update({ nome, descricao: desc }).eq('id', projId);
+    if (error) { toast('Erro: '+error.message, 'error'); return; }
+    await addLog(`Editou projeto`);
+    fecharModal(); toast('Projeto atualizado!'); await renderizarProjetos();
+}
+
+async function deletarProjetoConfirm(projId) {
+    if (!confirm('Tem certeza que deseja deletar este projeto? Isso também deletará todas as seções e etapas.')) return;
+    fecharModal();
+    const { error } = await sb.from('projetos').delete().eq('id', projId);
+    if (error) { toast('Erro: '+error.message, 'error'); return; }
+    await addLog('Deletou projeto');
+    toast('Projeto deletado.'); await renderizarProjetos();
+}
+
+// ─── EDITAR/DELETAR SEÇÕES ───────────────────
+async function editarSessao(sessId, projId) {
+    const proj = wsProjetos.find(p => p.id === projId);
+    if (!proj) return;
+    const sess = proj.sessoes?.find(s => s.id === sessId);
+    if (!sess) return;
+    const opts = wsMembers.map(u => `<option value="${u.id}">${escH(u.nome)} (${u.username})</option>`).join('');
+    const selIds = (sess.sessao_usuarios||[]).map(su => su.usuario_id);
+    const buttons = [
+        { label: '💾 Salvar', cls: 'btn-p', action: `salvarEdicaoSessao(${sessId})` },
+        { label: 'Cancelar', cls: 'btn-s', action: 'fecharModal()' }
+    ];
+    if (currentUserIsWorkspaceAdmin) {
+        buttons.push({ label: '🗑 Deletar Seção', cls: 'btn-s', style: 'border-color:var(--danger);color:var(--danger)', action: `deletarSessaoConfirm(${sessId})` });
+    }
+    abrirModal('✏ Editar Seção', `
+        <div class="fg"><label class="fl">Nome</label><input id="m-snome-edit" class="fi" value="${escH(sess.nome)}"/></div>
+        <div class="fg"><label class="fl">Descrição</label><input id="m-sdesc-edit" class="fi" value="${escH(sess.descricao||'')}"/></div>
+        <div class="fg"><label class="fl">Colaboradores</label>
+            <select id="m-susers-edit" class="fsel" multiple>${opts}</select>
+            <p class="fhint">Ctrl/Cmd para múltiplos.</p></div>
+    `, buttons);
+    // Prselecionar colaboradores
+    setTimeout(() => {
+        const sel = document.getElementById('m-susers-edit');
+        if (sel) {
+            Array.from(sel.options).forEach(opt => {
+                opt.selected = selIds.includes(+opt.value);
+            });
+        }
+    }, 0);
+}
+
+async function salvarEdicaoSessao(sessId) {
+    const nome = document.getElementById('m-snome-edit')?.value?.trim();
+    const desc = document.getElementById('m-sdesc-edit')?.value?.trim() || '';
+    const sel  = Array.from(document.getElementById('m-susers-edit')?.selectedOptions||[]).map(o=>+o.value);
+    if (!nome) { toast('Informe o nome.', 'warning'); return; }
+    const { error: errUpdate } = await sb.from('sessoes').update({ nome, descricao: desc }).eq('id', sessId);
+    if (errUpdate) { toast('Erro: '+errUpdate.message, 'error'); return; }
+    // Atualizar colaboradores
+    await sb.from('sessao_usuarios').delete().eq('sessao_id', sessId);
+    const users = [...new Set([currentUser.id, ...sel])];
+    await sb.from('sessao_usuarios').insert(users.map(uid => ({ sessao_id: sessId, usuario_id: uid })));
+    await addLog('Editou seção');
+    fecharModal(); toast('Seção atualizada!'); await renderizarProjetos();
+}
+
+async function deletarSessaoConfirm(sessId) {
+    if (!confirm('Tem certeza que deseja deletar esta seção? Isso também deletará todas as etapas.')) return;
+    fecharModal();
+    const { error } = await sb.from('sessoes').delete().eq('id', sessId);
+    if (error) { toast('Erro: '+error.message, 'error'); return; }
+    await addLog('Deletou seção');
+    toast('Seção deletada.'); await renderizarProjetos();
+}
+async function updateEtapaPrio(eId, prio) {
+    const { error } = await sb.from('etapas').update({ prioridade: +prio }).eq('id', eId);
+    if (error) { toast('Erro ao atualizar prioridade.', 'error'); return; }
+    await renderizarProjetos(); // re-render to update colors
+}
+
+async function updateEtapaStatus(eId, status) {
+    const { error } = await sb.from('etapas').update({ status }).eq('id', eId);
+    if (error) { toast('Erro ao atualizar status.', 'error'); return; }
+    await renderizarProjetos(); 
+}
+async function renderContribuidor() {
+    const c = document.getElementById('contrib-container');
+    c.innerHTML = '<div class="loading-c"><div class="spinner"></div></div>';
+    if (!wsMembers.length) { c.innerHTML = `<div class="empty-state"><div class="ei">👥</div><h3>Sem membros</h3></div>`; return; }
+    c.innerHTML = `<div class="contrib-grid">${wsMembers.map(u => `
+        <div class="contrib-card" onclick="verContribuidor(${u.id})">
+            <div class="contrib-av" style="background:${userColor(u.nome)}">${initials(u.nome)}</div>
+            <div class="contrib-name">${escH(u.nome)}</div>
+            <div class="contrib-user">@${u.username}</div>
+            <div class="contrib-meta">
+                <span class="badge ${u.wsRole === 'admin' ? 'b-acc' : u.wsRole === 'member' ? 'b-gray' : 'b-purple'}">${u.wsRole === 'admin' ? 'Admin' : u.wsRole === 'member' ? 'Membro' : 'Visitante'}</span>
+                <span class="badge b-purple">Nível ${u.nivel}</span>
+            </div>
+        </div>
+    `).join('')}</div>`;
+}
+
+async function verContribuidor(userId) {
+    const u = wsMembers.find(x => x.id===userId); if (!u) return;
+    document.getElementById('cpop-av').style.background = userColor(u.nome);
+    document.getElementById('cpop-av').textContent = initials(u.nome);
+    document.getElementById('cpop-name').textContent = u.nome;
+    document.getElementById('cpop-user').textContent = `@${u.username}`;
+    const roleOptions = ['visitor','member','admin'].map(r => `<option value="${r}" ${u.wsRole===r?'selected':''}>${r==='visitor'?'Visitante':r==='member'?'Membro':'Admin'}</option>`).join('');
+    const roleSelect = currentUserIsWorkspaceAdmin ? `<select class="fsel" onchange="alterarRole(${u.id}, this.value)">${roleOptions}</select>` : `<span class="badge ${u.wsAdmin ? 'b-acc' : 'b-gray'}">${u.wsAdmin ? 'Admin' : 'Membro'}</span>`;
+    document.getElementById('cpop-badges').innerHTML = roleSelect;
+    document.getElementById('cpop-projs').innerHTML = '<div class="spinner"></div>';
+    document.getElementById('cpop-ov').classList.remove('hidden');
+
+    // Projetos do usuário neste workspace via inner join
+    const { data: rows } = await sb.from('projeto_usuarios')
+        .select('projetos!inner(id, nome, workspace_id)')
+        .eq('usuario_id', userId)
+        .eq('projetos.workspace_id', currentWorkspace.id);
+
+    const el = document.getElementById('cpop-projs');
+    if (!rows?.length) { el.innerHTML = `<p style="font-size:.82rem;color:var(--muted)">Não está em nenhum projeto ainda.</p>`; return; }
+    el.innerHTML = rows.map(r => `<div class="cpop-proj"><span>📁</span> ${escH(r.projetos.nome)}</div>`).join('');
+}
+
+function fecharCpop() { document.getElementById('cpop-ov').classList.add('hidden'); }
+
+async function alterarRole(userId, newRole) {
+    if (!currentUserIsWorkspaceAdmin) return;
+    if (userId === currentWorkspaceCreatorId) {
+        toast('Não é possível alterar o role do criador do workspace.', 'error');
+        return;
+    }
+    if (userId === currentUser.id && newRole !== 'admin') {
+        toast('Você não pode remover seu próprio status de admin.', 'error');
+        return;
+    }
+    const { error } = await sb.from('workspace_usuarios').update({ role: newRole }).eq('workspace_id', currentWorkspace.id).eq('usuario_id', userId);
+    if (error) { toast('Erro ao alterar role.', 'error'); return; }
+    toast('Role alterado com sucesso.');
+    // Recarregar wsMembers
+    const { data: memberships } = await sb.from('workspace_usuarios').select('usuario_id, role').eq('workspace_id', currentWorkspace.id);
+    const memberIds = memberships.map(m => m.usuario_id);
+    const { data: users } = await sb.from('usuarios').select('*').in('id', memberIds);
+    wsMembers = (users || []).map(u => {
+        const membership = memberships.find(m => m.usuario_id === u.id);
+        return { ...u, wsAdmin: membership?.role === 'admin', wsRole: membership?.role || 'member' };
+    });
+    await renderContribuidor();
+    // Atualizar currentUserIsWorkspaceAdmin se for o próprio
+    if (userId === currentUser.id) {
+        currentUserIsWorkspaceAdmin = newRole === 'admin';
+        // Talvez recarregar dashboard se necessário
+    }
+}
+
+// ─── ADMIN: ADICIONAR COLABORADOR ─────────────────────
+function abrirModalAddMembro() {
+    abrirModal('➕ Adicionar Membro', `
+        <p class="fhint" style="margin-bottom:11px">Informe o username de um usuário existente no sistema.</p>
+        <div class="fg"><label class="fl">Username</label><input id="m-adduser" class="fi" placeholder="username_do_usuario"/></div>
+        <div id="m-add-err" class="err">Usuário não encontrado.</div>
+    `, [
+        { label: '➕ Adicionar', cls: 'btn-p', action: 'adicionarMembro()' },
+        { label: 'Cancelar', cls: 'btn-s', action: 'fecharModal()' }
+    ]);
+}
+
+async function adicionarMembro() {
+    const uname = document.getElementById('m-adduser')?.value?.trim();
+    const errEl = document.getElementById('m-add-err'); errEl.style.display='none';
+    if (!uname) return;
+    const { data: user } = await sb.from('usuarios').select('id,nome,username,nivel').eq('username', uname).single();
+    if (!user) { errEl.textContent='Usuário não encontrado.'; errEl.style.display='block'; return; }
+    const { data: exist } = await sb.from('workspace_usuarios')
+        .select('*').eq('workspace_id', currentWorkspace.id).eq('usuario_id', user.id).maybeSingle();
+    if (exist) { errEl.textContent='Este usuário já é membro.'; errEl.style.display='block'; return; }
+    await sb.from('workspace_usuarios').insert({
+        workspace_id: currentWorkspace.id,
+        usuario_id: user.id,
+        role: 'member'
+    });
+    wsMembers.push({ ...user, wsAdmin: false });
+    await addLog(`Adicionou @${user.username} ao workspace`);
+    fecharModal(); toast(`@${user.username} adicionado! 👋`); await renderContribuidor();
+}
+
+// ─── LOGS ────────────────────────────────────────
+async function addLog(msg) {
+    try { await sb.from('logs').insert({ usuario_id: currentUser.id, usuario_nome: currentUser.nome, mensagem: msg, workspace_id: currentWorkspace.id }); } catch {}
+}
+
+async function carregarLogs() {
+    const p = document.getElementById('logs-panel');
+    p.innerHTML = '<div style="color:#475569">Carregando...</div>';
+    const { data } = await sb.from('logs').select('*')
+        .eq('workspace_id', currentWorkspace.id)
+        .order('created_at', { ascending: false }).limit(200);
+    if (!data?.length) { p.innerHTML='<div style="color:#475569">Nenhum log.</div>'; return; }
+    p.innerHTML = data.map(l => `<div class="log-e">
+        <span class="lt">[${new Date(l.created_at).toLocaleString('pt-BR')}]</span>
+        <span class="lu"> ${escH(l.usuario_nome||'?')}:</span>
+        <span class="lm"> ${escH(l.mensagem)}</span>
+    </div>`).join('');
+}
+
+// ─── NOTAS ───────────────────────────────────────
+function carregarNotas() {
+    const stored = localStorage.getItem(notesStorageKey());
+    notes = stored ? JSON.parse(stored) : [];
+    renderNotes();
+}
+
+function renderNotes() {
+    const container = document.getElementById('anotacoes-container');
+    if (!notes.length) {
+        container.innerHTML = `<div class="note-empty"><div class="ei">🗒️</div> Nenhuma nota ainda. Crie sua primeira nota.</div>`;
+        return;
+    }
+    notes.sort((a,b) => new Date(b.updated_at) - new Date(a.updated_at));
+    container.innerHTML = notes.map(n => `
+        <div class="note-card" onclick="verNota(${n.id})">
+            <div class="note-head">
+                <div class="note-title">${escH(n.title)}</div>
+                <div class="note-meta">${new Date(n.updated_at).toLocaleDateString('pt-BR')}</div>
+            </div>
+            <div class="note-content">${escH(n.content)}</div>
+            ${n.attachments?.length ? `<div class="note-att">${n.attachments.map(a => `<div class="note-attach"><img src="${a}" alt="Anexo"/></div>`).join('')}</div>` : ''}
+        </div>`).join('');
+}
+
+function abrirModalNota(note=null) {
+    const title = note?.title || '';
+    const content = note?.content || '';
+    pendingNoteAttachments = note?.attachments ? [...note.attachments] : [];
+    const previewHtml = renderAttachmentPreview();
+    abrirModal(note ? '📝 Editar Nota' : '📝 Nova Nota', `
+        <div class="fg"><label class="fl">Título</label><input id="m-note-title" class="fi" value="${escH(title)}" placeholder="Ex: Brainstorm"/></div>
+        <div class="fg"><label class="fl">Conteúdo</label><textarea id="m-note-body" class="fta" style="min-height:130px" placeholder="Descreva sua ideia...">${escH(content)}</textarea></div>
+        <div class="fg"><label class="fl">Anexar imagens</label><input id="m-note-files" class="fi" type="file" accept="image/*" multiple onchange="previewNoteFiles(event)"/></div>
+        <div id="m-note-files-preview">${previewHtml}</div>
+    `, [
+        { label: note ? 'Salvar' : 'Criar', cls: 'btn-p', action: `salvarNota(${note?.id})` },
+        { label: 'Cancelar', cls: 'btn-s', action: 'fecharModal()' }
+    ]);
+}
+
+function renderAttachmentPreview() {
+    if (!pendingNoteAttachments.length) return '';
+    return `<div class="file-preview">${pendingNoteAttachments.map((src,i) => `<img src="${src}" alt="Anexo ${i+1}"/>`).join('')}</div>`;
+}
+
+function previewNoteFiles(event) {
+    const files = Array.from(event.target.files || []);
+    if (!files.length) return;
+
+    const readers = files.map(file => new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(file);
+    }));
+
+    Promise.all(readers).then(results => {
+        pendingNoteAttachments = pendingNoteAttachments.concat(results.filter(Boolean));
+        document.getElementById('m-note-files-preview').innerHTML = renderAttachmentPreview();
+    });
+}
+
+function salvarNota(id = null) {
+    const title = document.getElementById('m-note-title')?.value?.trim();
+    const content = document.getElementById('m-note-body')?.value?.trim();
+    if (!title && !content) { toast('Informe título ou conteúdo.', 'warning'); return; }
+
+    const now = new Date().toISOString();
+    if (id) {
+        notes = notes.map(n => n.id === id ? { ...n, title, content, attachments: pendingNoteAttachments, updated_at: now } : n);
+        toast('Nota atualizada.');
+    } else {
+        notes.push({
+            id: Date.now(),
+            title,
+            content,
+            attachments: pendingNoteAttachments,
+            created_at: now,
+            updated_at: now
+        });
+        toast('Nota criada!');
+    }
+    localStorage.setItem(notesStorageKey(), JSON.stringify(notes));
+    fecharModal();
+    renderNotes();
+}
+
+function verNota(id) {
+    const note = notes.find(n => n.id === id);
+    if (!note) return;
+    abrirModal('📝 Visualizar Nota', `
+        <div class="fg"><label class="fl">Título</label><div style="padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:var(--surface)">${escH(note.title)}</div></div>
+        <div class="fg"><label class="fl">Conteúdo</label><div style="padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:var(--surface);min-height:120px">${escH(note.content)}</div></div>
+        ${note.attachments?.length ? `<div class="fg"><label class="fl">Anexos</label><div class="note-att">${note.attachments.map(a => `<div class="note-attach"><img src="${a}" alt="Anexo"/></div>`).join('')}</div></div>` : ''}
+    `, [
+        { label: 'Editar', cls: 'btn-p', action: `fecharModal(); abrirModalNota(notes.find(n => n.id === ${id}))` },
+        { label: 'Excluir', cls: 'btn-s', action: `deletarNota(${id}); fecharModal()` },
+        { label: 'Fechar', cls: 'btn-s', action: 'fecharModal()' }
+    ]);
+}
+
+function deletarNota(id) {
+    notes = notes.filter(n => n.id !== id);
+    localStorage.setItem(notesStorageKey(), JSON.stringify(notes));
+    renderNotes();
+    toast('Nota removida.');
+}
+
+// ─── MODAL ───────────────────────────────────────
+function abrirModal(title, body, buttons=[]) {
+    const modalTitle = document.getElementById('m-title');
+    const modalBody = document.getElementById('m-body');
+    const modalFoot = document.getElementById('m-foot');
+    modalTitle.textContent = title;
+    modalBody.innerHTML = body;
+    modalFoot.innerHTML = buttons.map(b =>
+        `<button class="btn ${b.cls}" ${b.style ? `style="${b.style}"` : ''} onclick="${b.action}">${b.label}</button>`
+    ).join('');
+    document.getElementById('modal-ov').classList.remove('hidden');
+}
+
+function fecharModal() { document.getElementById('modal-ov').classList.add('hidden'); }
+
+// ─── TOAST ───────────────────────────────────────
+function toast(msg, type='success') {
+    const t = document.createElement('div');
+    t.className = `toast ${type==='error'?'error':type==='warning'?'warning':''}`;
+    t.textContent = msg;
+    document.getElementById('toast-ctr').appendChild(t);
+    setTimeout(() => t.remove(), 4000);
+}
+
+// ─── UTILS ───────────────────────────────────────
+function escH(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function userColor(name) {
+    const colors = ['#4f46e5','#7c3aed','#ec4899','#f59e0b','#10b981','#ef4444','#8b5cf6','#06b6d4'];
+    return colors[name.charCodeAt(0) % colors.length];
+}
+function initials(name) { return name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2); }
+</script>
+
+</body>
+</html>
