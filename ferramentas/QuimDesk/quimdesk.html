@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuimDesk</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ══ LIGHT THEME (DEFAULT) ══ */
+:root{
+  --bg:#f4f2ed; --surface:#eeece6; --card:#e8e5de;
+  --border:#d4d0c8; --border-light:#b8b4a8;
+  --text:#1e2028; --text-muted:#5a6070; --text-faint:#9aa0b0;
+  --gold:#8a6200; --gold-light:#a87800; --gold-bg:#fff8e2; --gold-border:#dfc050;
+  --silver:#3e5868; --silver-light:#2e4858; --silver-bg:#edf2f6; --silver-border:#98b4c4;
+  --blue:#1a5faa; --blue-bg:#e8f0fa; --blue-border:#9ab8e0; --blue-glow:rgba(26,95,170,.22);
+  --teal:#0f7a5a; --teal-bg:#e8f6f0; --teal-border:#80c8a8; --teal-glow:rgba(15,122,90,.22);
+  --coral:#b83820; --coral-bg:#faeee8; --coral-border:#d8a090; --coral-glow:rgba(184,56,32,.22);
+  --cat-alkali-bg:#fff3e6;   --cat-alkali-bd:#f0d0a0;   --cat-alkali-glow:#e08820;
+  --cat-alkaline-bg:#f4f8e6; --cat-alkaline-bd:#cce080;  --cat-alkaline-glow:#70aa10;
+  --cat-trans-bg:#eef2f8;    --cat-trans-bd:#b8cce8;    --cat-trans-glow:#3a70c8;
+  --cat-post-bg:#edf6ef;     --cat-post-bd:#a8d8b8;     --cat-post-glow:#20a058;
+  --cat-metal-bg:#f6f4e8;    --cat-metal-bd:#d8d098;    --cat-metal-glow:#908020;
+  --cat-non-bg:#e8f2fa;      --cat-non-bd:#a8cce8;      --cat-non-glow:#1878bc;
+  --cat-hal-bg:#f8eef2;      --cat-hal-bd:#e0b8cc;      --cat-hal-glow:#b83878;
+  --cat-noble-bg:#f0edf8;    --cat-noble-bd:#c8b8e8;    --cat-noble-glow:#7030b8;
+  --cat-lan-bg:#f8f0ea;      --cat-lan-bd:#e0c8a8;      --cat-lan-glow:#b07030;
+  --cat-act-bg:#eaf6f0;      --cat-act-bd:#a0d0c0;      --cat-act-glow:#109878;
+  --radius:6px; --radius-lg:10px;
+  --font-mono:'JetBrains Mono',monospace;
+  --font-serif:'Crimson Pro',Georgia,serif;
+  --font-display:'Cinzel',serif;
+}
+/* ══ DARK THEME ══ */
+[data-theme="dark"]{
+  --bg:#0b0f14; --surface:#141920; --card:#1c2330;
+  --border:#2a3344; --border-light:#354055;
+  --text:#dde4ee; --text-muted:#7a8899; --text-faint:#4a5568;
+  --gold:#c9943a; --gold-light:#e8b84b; --gold-bg:#1e1608; --gold-border:#3d2c0a;
+  --silver:#8fa3b5; --silver-light:#b8ccd9; --silver-bg:#0e1418; --silver-border:#1e3040;
+  --blue:#4a90d9; --blue-bg:#0d1a2e; --blue-border:#1a3a6a; --blue-glow:rgba(74,144,217,.35);
+  --teal:#3aaa88; --teal-bg:#091e18; --teal-border:#0f3028; --teal-glow:rgba(58,170,136,.35);
+  --coral:#c9604a; --coral-bg:#200e0b; --coral-border:#3a1a12; --coral-glow:rgba(201,96,74,.35);
+  --cat-alkali-bg:#1a1108;   --cat-alkali-bd:#2e1f0a;   --cat-alkali-glow:#d07820;
+  --cat-alkaline-bg:#151a0a; --cat-alkaline-bd:#243010;  --cat-alkaline-glow:#70aa10;
+  --cat-trans-bg:#0d1520;    --cat-trans-bd:#1a2535;    --cat-trans-glow:#3a70c0;
+  --cat-post-bg:#0d1a15;     --cat-post-bd:#162a22;     --cat-post-glow:#209850;
+  --cat-metal-bg:#14120e;    --cat-metal-bd:#261f0c;    --cat-metal-glow:#908020;
+  --cat-non-bg:#0a1420;      --cat-non-bd:#102030;      --cat-non-glow:#1878bc;
+  --cat-hal-bg:#1a0d12;      --cat-hal-bd:#2e1520;      --cat-hal-glow:#b03870;
+  --cat-noble-bg:#130d1a;    --cat-noble-bd:#201230;    --cat-noble-glow:#7030b8;
+  --cat-lan-bg:#14100d;      --cat-lan-bd:#261e14;      --cat-lan-glow:#b07030;
+  --cat-act-bg:#0d1412;      --cat-act-bd:#142420;      --cat-act-glow:#109878;
+}
+
+html{height:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--font-serif);font-size:16px;line-height:1.6;min-height:100%;overflow-x:hidden;transition:background .3s,color .3s}
+
+/* ── HEADER ── */
+header{display:flex;align-items:center;gap:1rem;padding:.75rem 1.5rem;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;transition:background .3s,border-color .3s}
+.logo{font-family:var(--font-display);font-size:1.05rem;font-weight:700;color:var(--gold-light);white-space:nowrap;letter-spacing:.05em;display:flex;align-items:center;gap:.45rem;flex-shrink:0}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--gold-light)}
+.search-wrap{flex:1;max-width:500px;position:relative}
+.search-wrap input{width:100%;padding:.48rem 1rem .48rem 2.4rem;background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);font-family:var(--font-serif);font-size:.93rem;outline:none;transition:border-color .2s,background .3s}
+.search-wrap input:focus{border-color:var(--border-light)}
+.search-wrap input::placeholder{color:var(--text-faint)}
+.search-icon{position:absolute;left:.68rem;top:50%;transform:translateY(-50%);color:var(--text-faint);font-size:.82rem;pointer-events:none}
+.header-tag{font-family:var(--font-mono);font-size:.68rem;color:var(--text-muted);border:1px solid var(--border);border-radius:4px;padding:.18rem .5rem;white-space:nowrap;margin-left:auto}
+.theme-btn{display:flex;align-items:center;gap:.38rem;padding:.32rem .7rem;border-radius:var(--radius);background:var(--card);border:1px solid var(--border);color:var(--text-muted);font-family:var(--font-mono);font-size:.68rem;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:background .15s,color .15s,border-color .15s}
+.theme-btn:hover{background:var(--border);color:var(--text)}
+
+/* ── LAYOUT ── */
+.layout{display:flex;height:calc(100vh - 48px)}
+.left-panel{width:min(700px,55%);flex-shrink:0;overflow-y:auto;padding:1rem .9rem;border-right:1px solid var(--border);transition:border-color .3s}
+.right-panel{flex:1;overflow-y:auto;padding:1.4rem 1.5rem}
+
+/* ── PERIODIC TABLE ── */
+.pt-label{font-family:var(--font-mono);font-size:.63rem;color:var(--text-faint);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.7rem}
+.pt-grid{display:grid;grid-template-columns:repeat(18,1fr);grid-template-rows:repeat(11,auto);gap:2px;font-family:var(--font-mono)}
+.pt-gap-row{grid-column:1/-1;height:5px}
+.el{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:3px;cursor:pointer;border:1px solid var(--cat-trans-bd);background:var(--cat-trans-bg);transition:border-color .2s,background .2s,transform .12s,opacity .3s,box-shadow .3s}
+.el:hover{border-color:var(--border-light);transform:scale(1.08);z-index:2}
+.el-num{font-size:.44rem;color:var(--text-faint);line-height:1;margin-bottom:1px}
+.el-sym{font-size:.74rem;font-weight:500;line-height:1;color:var(--text)}
+.cat-alkali{background:var(--cat-alkali-bg);border-color:var(--cat-alkali-bd)}
+.cat-alkaline{background:var(--cat-alkaline-bg);border-color:var(--cat-alkaline-bd)}
+.cat-transition{background:var(--cat-trans-bg);border-color:var(--cat-trans-bd)}
+.cat-post{background:var(--cat-post-bg);border-color:var(--cat-post-bd)}
+.cat-metalloid{background:var(--cat-metal-bg);border-color:var(--cat-metal-bd)}
+.cat-nonmetal{background:var(--cat-non-bg);border-color:var(--cat-non-bd)}
+.cat-halogen{background:var(--cat-hal-bg);border-color:var(--cat-hal-bd)}
+.cat-noble{background:var(--cat-noble-bg);border-color:var(--cat-noble-bd)}
+.cat-lanthanide{background:var(--cat-lan-bg);border-color:var(--cat-lan-bd)}
+.cat-actinide{background:var(--cat-act-bg);border-color:var(--cat-act-bd)}
+.cat-placeholder{background:transparent!important;border-color:transparent!important;cursor:default;pointer-events:none}
+.cat-placeholder:hover{transform:none}
+.cat-placeholder .el-sym{font-size:.44rem;color:var(--text-faint)}
+/*placeholder since i am still uploading the norms */
+.el-has-norms::after{
+  content:'';position:absolute;bottom:2px;right:2px;
+  width:3px;height:3px;border-radius:50%;
+  background:var(--teal);opacity:.8;
+}
+.el{position:relative}
+
+/* selected state */
+.el-selected{border-color:var(--border-light)!important;box-shadow:0 0 0 2px var(--border-light);z-index:5}
+
+/* family filter states */
+.el.el-dimmed{opacity:.12;box-shadow:none!important}
+.el.el-lit.cat-alkali   {border-color:var(--cat-alkali-glow)!important;  box-shadow:0 0 0 1px var(--cat-alkali-glow),  0 0 8px var(--cat-alkali-glow)}
+.el.el-lit.cat-alkaline {border-color:var(--cat-alkaline-glow)!important; box-shadow:0 0 0 1px var(--cat-alkaline-glow), 0 0 8px var(--cat-alkaline-glow)}
+.el.el-lit.cat-transition{border-color:var(--cat-trans-glow)!important;  box-shadow:0 0 0 1px var(--cat-trans-glow),   0 0 8px var(--cat-trans-glow)}
+.el.el-lit.cat-post     {border-color:var(--cat-post-glow)!important;    box-shadow:0 0 0 1px var(--cat-post-glow),    0 0 8px var(--cat-post-glow)}
+.el.el-lit.cat-metalloid{border-color:var(--cat-metal-glow)!important;   box-shadow:0 0 0 1px var(--cat-metal-glow),   0 0 8px var(--cat-metal-glow)}
+.el.el-lit.cat-nonmetal {border-color:var(--cat-non-glow)!important;     box-shadow:0 0 0 1px var(--cat-non-glow),     0 0 8px var(--cat-non-glow)}
+.el.el-lit.cat-halogen  {border-color:var(--cat-hal-glow)!important;     box-shadow:0 0 0 1px var(--cat-hal-glow),     0 0 8px var(--cat-hal-glow)}
+.el.el-lit.cat-noble    {border-color:var(--cat-noble-glow)!important;   box-shadow:0 0 0 1px var(--cat-noble-glow),   0 0 8px var(--cat-noble-glow)}
+.el.el-lit.cat-lanthanide{border-color:var(--cat-lan-glow)!important;    box-shadow:0 0 0 1px var(--cat-lan-glow),     0 0 8px var(--cat-lan-glow)}
+.el.el-lit.cat-actinide {border-color:var(--cat-act-glow)!important;     box-shadow:0 0 0 1px var(--cat-act-glow),     0 0 8px var(--cat-act-glow)}
+
+/* legend / family checkboxes */
+.legend-title{font-family:var(--font-mono);font-size:.6rem;color:var(--text-faint);text-transform:uppercase;letter-spacing:.1em;margin-top:1rem;margin-bottom:.5rem;padding-top:.75rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.legend-clear{font-size:.6rem;color:var(--text-faint);cursor:pointer;border:1px solid var(--border);border-radius:3px;padding:.1rem .4rem;background:transparent;font-family:var(--font-mono);transition:all .15s}
+.legend-clear:hover{background:var(--card);color:var(--text-muted)}
+.legend-grid{display:grid;grid-template-columns:1fr 1fr;gap:.3rem .6rem}
+.fam-cb{display:flex;align-items:center;gap:.45rem;padding:.32rem .55rem;border-radius:4px;cursor:pointer;border:1px solid var(--border);background:var(--surface);transition:all .18s;user-select:none}
+.fam-cb:hover{background:var(--card);border-color:var(--border-light)}
+.fam-cb.checked{border-color:var(--cb-col)!important;box-shadow:0 0 0 1.5px var(--cb-col),0 0 10px color-mix(in srgb,var(--cb-col) 35%,transparent)}
+@keyframes cbpop{0%{transform:scale(.93)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+.fam-cb.checked{animation:cbpop .2s ease-out}
+.cb-box{width:12px;height:12px;border-radius:2px;flex-shrink:0;border:1.5px solid var(--cb-col);display:flex;align-items:center;justify-content:center;transition:background .15s}
+.fam-cb.checked .cb-box{background:var(--cb-col)}
+.cb-check{font-size:.55rem;color:#fff;line-height:1;display:none}
+.fam-cb.checked .cb-check{display:block}
+.cb-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.cb-label{font-family:var(--font-mono);font-size:.62rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fam-cb.checked .cb-label{color:var(--text)}
+.fam-count-bar{margin-top:.55rem;padding:.4rem .6rem;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);font-family:var(--font-mono);font-size:.65rem;color:var(--text-muted);display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;transition:all .2s}
+.fam-count-bar.has-selection{border-color:var(--border-light);color:var(--text)}
+.fam-tag{font-family:var(--font-mono);font-size:.58rem;padding:.1rem .38rem;border-radius:3px;border:1px solid}
+
+/* ── RIGHT PANEL ── */
+.welcome{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1rem;padding:2rem}
+.welcome-icon{font-size:2.8rem;opacity:.2}
+.welcome h2{font-family:var(--font-display);font-size:1.25rem;font-weight:500;color:var(--text-muted)}
+.welcome p{font-size:.9rem;color:var(--text-faint);max-width:340px;line-height:1.6}
+
+/* element view */
+.el-header{display:flex;align-items:flex-start;gap:1.2rem;padding-bottom:1.2rem;border-bottom:1px solid var(--border);margin-bottom:1.4rem}
+.el-symbol-big{
+  font-family:var(--font-mono);font-size:2.8rem;font-weight:500;line-height:1;
+  padding:.5rem .8rem;border-radius:var(--radius-lg);min-width:78px;text-align:center;
+  background:var(--surface);border:1px solid var(--border);color:var(--text);
+}
+/* per-element colours */
+.el-header-info h1{font-family:var(--font-display);font-size:1.55rem;font-weight:500;margin-bottom:.2rem;color:var(--text)}
+.el-meta{display:flex;gap:.45rem;flex-wrap:wrap;margin-bottom:.4rem}
+.badge{font-family:var(--font-mono);font-size:.63rem;padding:.18rem .48rem;border-radius:4px}
+.badge-num{background:var(--surface);color:var(--text-muted);border:1px solid var(--border)}
+.badge-cat{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border)}
+.badge-group{background:var(--surface);color:var(--text-muted);border:1px solid var(--border)}
+.el-desc{font-size:.88rem;color:var(--text-muted);font-style:italic;line-height:1.6}
+
+.props-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.45rem;margin-bottom:1.4rem}
+.prop-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.55rem .75rem}
+.prop-label{font-family:var(--font-mono);font-size:.58rem;color:var(--text-faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.18rem}
+.prop-value{font-family:var(--font-mono);font-size:.82rem;color:var(--text)}
+
+/* norms section */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
+.section-title{font-family:var(--font-mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted)}
+.norm-count{font-family:var(--font-mono);font-size:.63rem;color:var(--text-faint)}
+.filter-row{display:flex;gap:.4rem;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
+.filter-hint{font-family:var(--font-mono);font-size:.58rem;color:var(--text-faint);opacity:.7}
+.filter-btn{font-family:var(--font-mono);font-size:.65rem;padding:.28rem .72rem;border-radius:4px;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);transition:all .18s}
+.filter-btn:hover{border-color:var(--border-light);color:var(--text);background:var(--card)}
+.filter-btn.active-all {background:var(--card);border-color:var(--border-light);color:var(--text);font-weight:500}
+.filter-btn.active-abnt{background:var(--blue-bg);border-color:var(--blue);color:var(--blue);box-shadow:0 0 0 2px var(--blue-glow),0 0 12px var(--blue-glow)}
+.filter-btn.active-iso {background:var(--teal-bg);border-color:var(--teal);color:var(--teal);box-shadow:0 0 0 2px var(--teal-glow),0 0 12px var(--teal-glow)}
+.filter-btn.active-astm{background:var(--coral-bg);border-color:var(--coral);color:var(--coral);box-shadow:0 0 0 2px var(--coral-glow),0 0 12px var(--coral-glow)}
+@keyframes pop{0%{transform:scale(.9)}60%{transform:scale(1.07)}100%{transform:scale(1)}}
+.filter-btn.active-abnt,.filter-btn.active-iso,.filter-btn.active-astm{animation:pop .2s ease-out}
+
+.norm-list{display:flex;flex-direction:column;gap:.55rem}
+.norm-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.85rem 1rem;transition:border-color .15s}
+.norm-card:hover{border-color:var(--border-light)}
+.norm-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.8rem;margin-bottom:.38rem}
+.norm-code{font-family:var(--font-mono);font-size:.73rem;font-weight:500;color:var(--text)}
+.norm-type-badge{font-family:var(--font-mono);font-size:.58rem;padding:.13rem .42rem;border-radius:3px;white-space:nowrap;flex-shrink:0}
+.type-abnt{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border)}
+.type-iso {background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal-border)}
+.type-astm{background:var(--coral-bg);color:var(--coral);border:1px solid var(--coral-border)}
+.norm-title{font-size:.84rem;color:var(--text-muted);line-height:1.45;margin-bottom:.48rem}
+.norm-footer{display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap}
+.norm-scope{font-family:var(--font-mono);font-size:.58rem;color:var(--text-faint)}
+
+/* NO NORMS := SHOW PLACEHOLDER */
+.no-norms{
+  display:flex;flex-direction:column;align-items:center;gap:.6rem;
+  padding:1.5rem 1rem;text-align:center;
+  background:var(--surface);border:1px dashed var(--border);
+  border-radius:var(--radius);
+}
+.no-norms-icon{font-size:1.6rem;opacity:.25}
+.no-norms-text{font-family:var(--font-mono);font-size:.75rem;color:var(--text-faint)}
+.no-norms-hint{font-size:.78rem;color:var(--text-faint);line-height:1.5}
+
+/* link button */
+.link-btn{
+  display:inline-flex;align-items:center;gap:.35rem;
+  font-family:var(--font-mono);font-size:.63rem;
+  padding:.25rem .65rem;border-radius:4px;cursor:pointer;
+  border:1px solid var(--border);background:transparent;
+  color:var(--text-muted);text-decoration:none;
+  transition:all .15s;white-space:nowrap;
+}
+.link-btn:hover{border-color:var(--blue-border);color:var(--blue);background:var(--blue-bg)}
+.link-btn svg{width:11px;height:11px;flex-shrink:0;fill:currentColor}
+
+/* category colormap for the symbol box */
+.sym-alkali   {background:var(--cat-alkali-bg)!important;  border-color:var(--cat-alkali-bd)!important;  color:var(--cat-alkali-glow)!important}
+.sym-alkaline {background:var(--cat-alkaline-bg)!important;border-color:var(--cat-alkaline-bd)!important;color:var(--cat-alkaline-glow)!important}
+.sym-transition{background:var(--cat-trans-bg)!important;  border-color:var(--cat-trans-bd)!important;   color:var(--cat-trans-glow)!important}
+.sym-post     {background:var(--cat-post-bg)!important;    border-color:var(--cat-post-bd)!important;    color:var(--cat-post-glow)!important}
+.sym-metalloid{background:var(--cat-metal-bg)!important;   border-color:var(--cat-metal-bd)!important;   color:var(--cat-metal-glow)!important}
+.sym-nonmetal {background:var(--cat-non-bg)!important;     border-color:var(--cat-non-bd)!important;     color:var(--cat-non-glow)!important}
+.sym-halogen  {background:var(--cat-hal-bg)!important;     border-color:var(--cat-hal-bd)!important;     color:var(--cat-hal-glow)!important}
+.sym-noble    {background:var(--cat-noble-bg)!important;   border-color:var(--cat-noble-bd)!important;   color:var(--cat-noble-glow)!important}
+.sym-lanthanide{background:var(--cat-lan-bg)!important;    border-color:var(--cat-lan-bd)!important;     color:var(--cat-lan-glow)!important}
+.sym-actinide {background:var(--cat-act-bg)!important;     border-color:var(--cat-act-bd)!important;     color:var(--cat-act-glow)!important}
+
+/* search dropdown */
+.search-results{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;z-index:200;max-height:270px;overflow-y:auto;box-shadow:0 4px 18px rgba(0,0,0,.1)}
+.sr-item{padding:.48rem 1rem;cursor:pointer;border-bottom:1px solid var(--border);transition:background .1s}
+.sr-item:last-child{border-bottom:none}
+.sr-item:hover{background:var(--surface)}
+.sr-item-top{display:flex;align-items:center;gap:.48rem;margin-bottom:.08rem}
+.sr-item-code{font-family:var(--font-mono);font-size:.73rem;color:var(--text)}
+.sr-item-text{font-size:.78rem;color:var(--text-muted)}
+.sr-el{display:flex;align-items:center;gap:.75rem}
+.sr-el-sym{font-family:var(--font-mono);font-size:.95rem;font-weight:500;width:30px;text-align:center}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><div class="logo-dot"></div>QuimDesk</div>
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="search" placeholder="Buscar norma, código, método ou elemento...">
+    <div class="search-results hidden" id="search-results"></div>
+  </div>
+  <div class="header-tag" id="header-tag"></div>
+  <button class="theme-btn" onclick="toggleTheme()">
+    <span id="theme-icon">☀️</span>
+  </button>
+</header>
+
+<div class="layout">
+  <div class="left-panel">
+    <div class="pt-label">Clique em qualquer elemento</div>
+    <div class="pt-grid" id="pt-grid"></div>
+    <div class="legend-title">
+      <span>Filtrar por família</span>
+      <button class="legend-clear" onclick="clearFamilies()">✕ Limpar</button>
+    </div>
+    <div class="legend-grid" id="legend-grid"></div>
+    <div class="fam-count-bar" id="fam-count-bar">
+      <span id="fam-count-text" style="color:var(--text-faint)">Nenhuma família selecionada</span>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="welcome" id="welcome">
+      <div class="welcome-icon">⚗</div>
+      <h2>Selecione um elemento</h2>
+      <p>Clique em qualquer elemento da tabela para ver suas normas. Por enquanto apenas elementos com <span style="color:var(--teal)">●</span>possuem normas catalogadas.</p>
+    </div>
+    <div id="element-view" class="hidden"></div>
+  </div>
+</div>
+
+<script>
+/* ══ CONFIG ══════════════════════════════════════════ */
+const ELEMENTS_URL = 'data/elements.json';
+const NORMAS_URL   = 'data/normas.json';
+
+/* ══ CATEGORY LABELS/(PT-BR) ════════════════════════ */
+const CAT_LABEL = {
+  alkali:'Metal Alcalino', alkaline:'Alcalino-terroso',
+  transition:'Metal de Transição', post:'Pós-transição',
+  metalloid:'Metalóide', nonmetal:'Não-metal',
+  halogen:'Halogênio', noble:'Gás Nobre',
+  lanthanide:'Lantanídeo', actinide:'Actinídeo'
+};
+
+/* ══ FAMILIES ═════════════════════════════════════ */
+const FAMILIES = [
+  {id:'alkali',     label:'Metal alcalino',    bg:'--cat-alkali-bg',   bd:'--cat-alkali-bd',   glow:'--cat-alkali-glow'},
+  {id:'alkaline',   label:'Alcalino-terroso',  bg:'--cat-alkaline-bg', bd:'--cat-alkaline-bd', glow:'--cat-alkaline-glow'},
+  {id:'transition', label:'Metal de transição',bg:'--cat-trans-bg',    bd:'--cat-trans-bd',    glow:'--cat-trans-glow'},
+  {id:'post',       label:'Pós-transição',     bg:'--cat-post-bg',     bd:'--cat-post-bd',     glow:'--cat-post-glow'},
+  {id:'metalloid',  label:'Metalóide',         bg:'--cat-metal-bg',    bd:'--cat-metal-bd',    glow:'--cat-metal-glow'},
+  {id:'nonmetal',   label:'Não-metal',         bg:'--cat-non-bg',      bd:'--cat-non-bd',      glow:'--cat-non-glow'},
+  {id:'halogen',    label:'Halogênio',         bg:'--cat-hal-bg',      bd:'--cat-hal-bd',      glow:'--cat-hal-glow'},
+  {id:'noble',      label:'Gás nobre',         bg:'--cat-noble-bg',    bd:'--cat-noble-bd',    glow:'--cat-noble-glow'},
+];
+const CAT_TO_FAM = {alkali:'alkali',alkaline:'alkaline',transition:'transition',post:'post',metalloid:'metalloid',nonmetal:'nonmetal',halogen:'halogen',noble:'noble',lanthanide:null,actinide:null};
+
+/* ══ STATE ═════════════════════════════════════════ */
+let ELEMENTS = [], NORMAS = {};
+let activeFamilies = new Set();
+let activeNormFilters = new Set();
+let currentSym = null;
+let searchIndex = [];
+
+/* ══ THEME ═══════════════════════════════════════════ */
+function toggleTheme(){
+  const h = document.documentElement;
+  const dark = h.getAttribute('data-theme') === 'dark';
+  h.setAttribute('data-theme', dark ? 'light' : 'dark');
+  document.getElementById('theme-icon').textContent = dark ? '☀️' : '🌙';
+  //document.getElementById('theme-label').textContent = dark ? '' : '';
+}
+
+/* ══ LOAD DATA ═══════════════════════════════════════ */
+async function loadData(){
+  try {
+    const [elRes, nrRes] = await Promise.all([fetch(ELEMENTS_URL), fetch(NORMAS_URL)]);
+    ELEMENTS = await elRes.json();
+    NORMAS   = await nrRes.json();
+  } catch(e) {
+    ELEMENTS = FALLBACK_ELEMENTS;
+    NORMAS   = FALLBACK_NORMAS;
+  }
+  const normaSyms = Object.keys(NORMAS);
+  buildSearchIndex();
+  renderTable();
+  renderLegendCheckboxes();
+}
+
+/* ══ SEARCH INDEX ════════════════════════════════════ */
+function buildSearchIndex(){
+  searchIndex = [];
+  ELEMENTS.filter(e => e.z > 0).forEach(e => searchIndex.push({type:'element', sym:e.s, name:e.n}));
+  Object.values(NORMAS).forEach(el => {
+    el.normas.forEach(n => searchIndex.push({type:'norm', sym:el.sym, code:n.codigo, title:n.titulo, tipo:n.tipo, link:n.link}));
+  });
+}
+
+/* ══ PERIODIC TABLE ══════════════════════════════════ */
+const CAT_CLS = {
+  alkali:'cat-alkali', alkaline:'cat-alkaline', transition:'cat-transition',
+  post:'cat-post', metalloid:'cat-metalloid', nonmetal:'cat-nonmetal',
+  halogen:'cat-halogen', noble:'cat-noble',
+  lanthanide:'cat-lanthanide', actinide:'cat-actinide', placeholder:'cat-placeholder'
+};
+
+function renderTable(){
+  const g = document.getElementById('pt-grid');
+  g.innerHTML = '';
+  ELEMENTS.forEach(el => {
+    const d = document.createElement('div');
+    d.className = 'el ' + (CAT_CLS[el.cat] || 'cat-transition');
+    d.style.gridColumn = el.c;
+    d.style.gridRow = el.r >= 9 ? el.r + 1 : el.r;
+    d.dataset.sym = el.s;
+    d.dataset.cat = el.cat;
+    d.title = el.n + (el.z ? ' (Z=' + el.z + ')' : '');
+
+    if(el.cat !== 'placeholder' && el.z > 0){
+      // PLACEHOLDER PIMP 
+      if(NORMAS[el.s]) d.classList.add('el-has-norms');
+      d.innerHTML = `<span class="el-num">${el.z}</span><span class="el-sym">${el.s}</span>`;
+      d.addEventListener('click', () => showElement(el.s));
+    } else {
+      d.innerHTML = `<span class="el-sym">${el.s}</span>`;
+    }
+    g.appendChild(d);
+  });
+  // GAP ROW for block F
+  const gap = document.createElement('div');
+  gap.className = 'pt-gap-row'; gap.style.gridRow = '8'; gap.style.gridColumn = '1/-1';
+  g.appendChild(gap);
+}
+
+/* ══ FAMILY CHECKBOXES ═══════════════════════════════ */
+function renderLegendCheckboxes(){
+  const grid = document.getElementById('legend-grid');
+  grid.innerHTML = '';
+  FAMILIES.forEach(fam => {
+    const item = document.createElement('div');
+    item.className = 'fam-cb';
+    item.id = 'fcb-' + fam.id;
+    item.style.setProperty('--cb-col', `var(${fam.glow})`);
+    item.innerHTML = `
+      <div class="cb-box"><span class="cb-check">✓</span></div>
+      <div class="cb-dot" style="background:var(${fam.bg});border:1px solid var(${fam.bd})"></div>
+      <span class="cb-label">${fam.label}</span>`;
+    item.addEventListener('click', () => toggleFamily(fam.id));
+    grid.appendChild(item);
+  });
+}
+
+function toggleFamily(id){
+  activeFamilies.has(id) ? activeFamilies.delete(id) : activeFamilies.add(id);
+  syncFamilyUI();
+}
+function clearFamilies(){ activeFamilies.clear(); syncFamilyUI(); }
+
+function syncFamilyUI(){
+  FAMILIES.forEach(fam => {
+    const cb = document.getElementById('fcb-' + fam.id);
+    if(cb) cb.classList.toggle('checked', activeFamilies.has(fam.id));
+  });
+  document.querySelectorAll('.el').forEach(c => {
+    const cat = c.dataset.cat;
+    if(cat === 'placeholder') return;
+    if(activeFamilies.size === 0){
+      c.classList.remove('el-lit','el-dimmed');
+    } else {
+      const inFamily = CAT_TO_FAM[cat] && activeFamilies.has(CAT_TO_FAM[cat]);
+      c.classList.toggle('el-lit',    !!inFamily);
+      c.classList.toggle('el-dimmed', !inFamily);
+    }
+  });
+  updateFamCountBar();
+}
+
+function updateFamCountBar(){
+  const bar  = document.getElementById('fam-count-bar');
+  const text = document.getElementById('fam-count-text');
+  if(activeFamilies.size === 0){
+    bar.classList.remove('has-selection');
+    text.innerHTML = `<span style="color:var(--text-faint)">Nenhuma família selecionada</span>`;
+    return;
+  }
+  bar.classList.add('has-selection');
+  let total = 0, tags = '';
+  activeFamilies.forEach(famId => {
+    const fam = FAMILIES.find(f => f.id === famId);
+    const count = ELEMENTS.filter(e => CAT_TO_FAM[e.cat] === famId && e.z > 0).length;
+    total += count;
+    tags += `<span class="fam-tag" style="background:var(${fam.bg});border-color:var(${fam.bd});color:var(${fam.glow})">${fam.label} · ${count}</span>`;
+  });
+  text.innerHTML = `<span style="color:var(--text-muted);margin-right:.3rem">${total} elemento${total!==1?'s':''}</span>${tags}`;
+}
+
+function showElement(sym){
+  currentSym = sym;
+  activeNormFilters.clear();
+
+  // mark selected cell
+  document.querySelectorAll('.el-selected').forEach(e => e.classList.remove('el-selected'));
+  const cell = document.querySelector(`.el[data-sym="${sym}"]`);
+  if(cell) cell.classList.add('el-selected');
+
+  document.getElementById('welcome').classList.add('hidden');
+  document.getElementById('element-view').classList.remove('hidden');
+
+  //  MERGE DATA => return result
+  const base   = ELEMENTS.find(e => e.s === sym) || {};
+  const rich   = NORMAS[sym] || null;
+
+  const data = {
+    sym:     sym,
+    nome:    rich?.nome    || base.n   || sym,
+    z:       base.z        || rich?.z  || '—',
+    peso:    rich?.peso    || '—',
+    cat:     rich?.cat     || CAT_LABEL[base.cat] || base.cat || '—',
+    catKey:  base.cat      || 'transition',
+    grupo:   rich?.grupo   || '—',
+    periodo: rich?.periodo || (base.r  || '—'),
+    estado:  rich?.estado  || '—',
+    cor:     rich?.cor     || '—',
+    bloco:   rich?.bloco   || derivarBloco(base.cat),
+    desc:    rich?.desc    || null,
+    normas:  rich?.normas  || [],
+  };
+
+  renderElementView(data);
+}
+
+function derivarBloco(cat){
+  if(!cat) return '—';
+  if(['alkali','alkaline'].includes(cat)) return 's';
+  if(['transition'].includes(cat)) return 'd';
+  if(['lanthanide','actinide'].includes(cat)) return 'f';
+  return 'p';
+}
+
+function renderElementView(d){
+  const symCls = 'sym-' + d.catKey;
+  const hasNorms = d.normas.length > 0;
+
+  document.getElementById('element-view').innerHTML = `
+    <div class="el-header">
+      <div class="el-symbol-big ${symCls}">${d.sym}</div>
+      <div class="el-header-info">
+        <h1>${d.nome}</h1>
+        <div class="el-meta">
+          <span class="badge badge-num">Z = ${d.z}</span>
+          ${d.peso !== '—' ? `<span class="badge badge-num">M = ${d.peso} g/mol</span>` : ''}
+          <span class="badge badge-cat">${d.cat}</span>
+          ${hasNorms ? `<span class="badge" style="background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal-border)">● ${d.normas.length} norma${d.normas.length!==1?'s':''}</span>` : ''}
+        </div>
+        ${d.desc ? `<p class="el-desc">${d.desc}</p>` : ''}
+      </div>
+    </div>
+
+    <div class="props-grid">
+      <div class="prop-card"><div class="prop-label">Grupo</div><div class="prop-value">${d.grupo}</div></div>
+      <div class="prop-card"><div class="prop-label">Período</div><div class="prop-value">${d.periodo}</div></div>
+      <div class="prop-card"><div class="prop-label">Bloco</div><div class="prop-value">${d.bloco}</div></div>
+      <div class="prop-card"><div class="prop-label">Estado (25°C)</div><div class="prop-value">${d.estado}</div></div>
+      <div class="prop-card"><div class="prop-label">Cor</div><div class="prop-value">${d.cor}</div></div>
+      <div class="prop-card"><div class="prop-label">Nº atômico</div><div class="prop-value">${d.z}</div></div>
+    </div>
+
+    <div class="section-header">
+      <span class="section-title">Normas e Métodos</span>
+      <span class="norm-count" id="norm-count">${d.normas.length} norma${d.normas.length!==1?'s':''}</span>
+    </div>
+
+    ${hasNorms ? `
+    <div class="filter-row">
+      <button id="fbtn-all"  class="filter-btn active-all" onclick="setNormFilter('ALL')">Todas</button>
+      <button id="fbtn-abnt" class="filter-btn"            onclick="setNormFilter('ABNT')">ABNT</button>
+      <button id="fbtn-iso"  class="filter-btn"            onclick="setNormFilter('ISO')">ISO</button>
+      <button id="fbtn-astm" class="filter-btn"            onclick="setNormFilter('ASTM')">ASTM</button>
+      <span class="filter-hint">— selecione múltiplos</span>
+    </div>` : ''}
+
+    <div class="norm-list" id="norm-list"></div>`;
+
+  renderNorms(d);
+}
+
+/* ══ NORM FILTERS ════════════════════════════════════ */
+function setNormFilter(type){
+  if(type === 'ALL') activeNormFilters.clear();
+  else activeNormFilters.has(type) ? activeNormFilters.delete(type) : activeNormFilters.add(type);
+  syncNormBtns();
+  if(currentSym) renderNorms(buildCurrentData());
+}
+
+function buildCurrentData(){
+  const base = ELEMENTS.find(e => e.s === currentSym) || {};
+  const rich = NORMAS[currentSym] || null;
+  return {
+    normas: rich?.normas || [],
+    sym: currentSym, nome: rich?.nome || base.n || currentSym,
+    z: base.z || '—', peso: rich?.peso || '—',
+    cat: rich?.cat || CAT_LABEL[base.cat] || base.cat || '—',
+    catKey: base.cat || 'transition',
+    grupo: rich?.grupo || '—', periodo: rich?.periodo || '—',
+    estado: rich?.estado || '—', cor: rich?.cor || '—',
+    bloco: rich?.bloco || derivarBloco(base.cat), desc: rich?.desc || null,
+  };
+}
+
+function syncNormBtns(){
+  const ba=document.getElementById('fbtn-all'),bb=document.getElementById('fbtn-abnt'),bi=document.getElementById('fbtn-iso'),bs=document.getElementById('fbtn-astm');
+  if(!ba) return;
+  [ba,bb,bi,bs].forEach(b => b.className='filter-btn');
+  if(activeNormFilters.size===0){ ba.classList.add('active-all'); }
+  else {
+    if(activeNormFilters.has('ABNT')) bb.classList.add('active-abnt');
+    if(activeNormFilters.has('ISO'))  bi.classList.add('active-iso');
+    if(activeNormFilters.has('ASTM')) bs.classList.add('active-astm');
+  }
+}
+
+function filteredNorms(d){ return activeNormFilters.size===0 ? d.normas : d.normas.filter(n => activeNormFilters.has(n.tipo)); }
+
+function renderNorms(d){
+  const list = document.getElementById('norm-list'); if(!list) return;
+  const cnt  = document.getElementById('norm-count');
+
+  if(!d.normas.length){
+    if(cnt) cnt.textContent = '0 normas';
+    list.innerHTML = `
+      <div class="no-norms">
+        <div class="no-norms-icon">📋</div>
+        <div class="no-norms-text">Nenhuma norma catalogada</div>
+        <div class="no-norms-hint">Aguarde, ou faça uma requisição da norma pro email .</div>
+      </div>`;
+    return;
+  }
+
+  const norms = filteredNorms(d);
+  if(cnt) cnt.textContent = norms.length + ' norma' + (norms.length!==1?'s':'');
+
+  if(!norms.length){
+    list.innerHTML = `<div style="padding:1.5rem;text-align:center;font-family:var(--font-mono);font-size:.78rem;color:var(--text-faint)">Nenhuma norma com os filtros selecionados.</div>`;
+    return;
+  }
+
+  list.innerHTML = norms.map(n => `
+    <div class="norm-card">
+      <div class="norm-card-top">
+        <span class="norm-code">${n.codigo} (${n.ano})</span>
+        <span class="norm-type-badge type-${n.tipo.toLowerCase()}">${n.tipo}</span>
+      </div>
+      <div class="norm-title">${n.titulo}</div>
+      <div class="norm-footer">
+        <span class="norm-scope">${n.escopo}</span>
+        <a class="link-btn" href="${n.link}" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8.75 1.25a.75.75 0 0 0-1.5 0v6.19L5.28 5.47a.75.75 0 0 0-1.06 1.06l3.25 3.25a.75.75 0 0 0 1.06 0l3.25-3.25a.75.75 0 0 0-1.06-1.06L8.75 7.44V1.25ZM2.5 10.75a.75.75 0 0 0-1.5 0v1.5A2.75 2.75 0 0 0 3.75 15h8.5A2.75 2.75 0 0 0 15 12.25v-1.5a.75.75 0 0 0-1.5 0v1.5c0 .69-.56 1.25-1.25 1.25h-8.5c-.69 0-1.25-.56-1.25-1.25v-1.5Z"/></svg>
+          Link para a Norma
+        </a>
+      </div>
+    </div>`).join('');
+}
+
+/* ══ SEARCH ══════════════════════════════════════════ */
+const searchInput   = document.getElementById('search');
+const searchResults = document.getElementById('search-results');
+
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.trim().toLowerCase();
+  if(!q){ searchResults.classList.add('hidden'); return; }
+  const m = searchIndex.filter(i =>
+    i.type === 'element'
+      ? i.name.toLowerCase().includes(q) || i.sym.toLowerCase() === q
+      : i.code.toLowerCase().includes(q) || i.title.toLowerCase().includes(q) || i.tipo.toLowerCase().includes(q)
+  ).slice(0, 8);
+  if(!m.length){ searchResults.classList.add('hidden'); return; }
+  searchResults.innerHTML = m.map(i => {
+    if(i.type === 'element'){
+      const base = ELEMENTS.find(e => e.s === i.sym);
+      const cat  = base?.cat || 'transition';
+      const glowVar = FAMILIES.find(f => f.id === CAT_TO_FAM[cat])?.glow || '--text-muted';
+      return `<div class="sr-item" onclick="pick('${i.sym}','element')">
+        <div class="sr-el">
+          <span class="sr-el-sym" style="color:var(${glowVar})">${i.sym}</span>
+          <span style="font-size:.84rem">${i.name}</span>
+          ${NORMAS[i.sym]?`<span style="font-family:var(--font-mono);font-size:.56rem;color:var(--teal)">● normas</span>`:''}
+        </div></div>`;
+    }
+    return `<div class="sr-item" onclick="pick('${i.sym}','norm','${i.code}')">
+      <div class="sr-item-top">
+        <span class="sr-item-code">${i.code}</span>
+        <span class="norm-type-badge type-${i.tipo.toLowerCase()}" style="font-size:.58rem;padding:.1rem .35rem">${i.tipo}</span>
+      </div>
+      <div class="sr-item-text">${i.title.substring(0,82)}${i.title.length>82?'…':''}</div></div>`;
+  }).join('');
+  searchResults.classList.remove('hidden');
+});
+
+function pick(sym, type, code){
+  searchResults.classList.add('hidden'); searchInput.value = '';
+  showElement(sym);
+  if(type === 'norm' && code){
+    setTimeout(() => {
+      document.querySelectorAll('.norm-code').forEach(c => {
+        if(c.textContent.startsWith(code)){
+          const card = c.closest('.norm-card');
+          card.scrollIntoView({behavior:'smooth', block:'center'});
+          card.style.borderColor = 'var(--border-light)';
+          setTimeout(() => card.style.borderColor = '', 1800);
+        }
+      });
+    }, 120);
+  }
+}
+
+document.addEventListener('click', e => { if(!e.target.closest('.search-wrap')) searchResults.classList.add('hidden'); });
+document.addEventListener('keydown', e => {
+  if(e.key === '/' && document.activeElement !== searchInput){ e.preventDefault(); searchInput.focus(); }
+  if(e.key === 'Escape') searchResults.classList.add('hidden');
+});
+
+/* ══ FALLBACK ═══════════════════════════════ */
+//const FALLBACK_ELEMENTS=[{"z":1,"s":"H","n":"Hidrogênio","r":1,"c":1,"cat":"nonmetal"},{"z":2,"s":"He","n":"Hélio","r":1,"c":18,"cat":"noble"},{"z":3,"s":"Li","n":"Lítio","r":2,"c":1,"cat":"alkali"},{"z":4,"s":"Be","n":"Berílio","r":2,"c":2,"cat":"alkaline"},{"z":5,"s":"B","n":"Boro","r":2,"c":13,"cat":"metalloid"},{"z":6,"s":"C","n":"Carbono","r":2,"c":14,"cat":"nonmetal"},{"z":7,"s":"N","n":"Nitrogênio","r":2,"c":15,"cat":"nonmetal"},{"z":8,"s":"O","n":"Oxigênio","r":2,"c":16,"cat":"nonmetal"},{"z":9,"s":"F","n":"Flúor","r":2,"c":17,"cat":"halogen"},{"z":10,"s":"Ne","n":"Neônio","r":2,"c":18,"cat":"noble"},{"z":11,"s":"Na","n":"Sódio","r":3,"c":1,"cat":"alkali"},{"z":12,"s":"Mg","n":"Magnésio","r":3,"c":2,"cat":"alkaline"},{"z":13,"s":"Al","n":"Alumínio","r":3,"c":13,"cat":"post"},{"z":14,"s":"Si","n":"Silício","r":3,"c":14,"cat":"metalloid"},{"z":15,"s":"P","n":"Fósforo","r":3,"c":15,"cat":"nonmetal"},{"z":16,"s":"S","n":"Enxofre","r":3,"c":16,"cat":"nonmetal"},{"z":17,"s":"Cl","n":"Cloro","r":3,"c":17,"cat":"halogen"},{"z":18,"s":"Ar","n":"Argônio","r":3,"c":18,"cat":"noble"},{"z":19,"s":"K","n":"Potássio","r":4,"c":1,"cat":"alkali"},{"z":20,"s":"Ca","n":"Cálcio","r":4,"c":2,"cat":"alkaline"},{"z":21,"s":"Sc","n":"Escândio","r":4,"c":3,"cat":"transition"},{"z":22,"s":"Ti","n":"Titânio","r":4,"c":4,"cat":"transition"},{"z":23,"s":"V","n":"Vanádio","r":4,"c":5,"cat":"transition"},{"z":24,"s":"Cr","n":"Cromo","r":4,"c":6,"cat":"transition"},{"z":25,"s":"Mn","n":"Manganês","r":4,"c":7,"cat":"transition"},{"z":26,"s":"Fe","n":"Ferro","r":4,"c":8,"cat":"transition"},{"z":27,"s":"Co","n":"Cobalto","r":4,"c":9,"cat":"transition"},{"z":28,"s":"Ni","n":"Níquel","r":4,"c":10,"cat":"transition"},{"z":29,"s":"Cu","n":"Cobre","r":4,"c":11,"cat":"transition"},{"z":30,"s":"Zn","n":"Zinco","r":4,"c":12,"cat":"transition"},{"z":31,"s":"Ga","n":"Gálio","r":4,"c":13,"cat":"post"},{"z":32,"s":"Ge","n":"Germânio","r":4,"c":14,"cat":"metalloid"},{"z":33,"s":"As","n":"Arsênio","r":4,"c":15,"cat":"metalloid"},{"z":34,"s":"Se","n":"Selênio","r":4,"c":16,"cat":"nonmetal"},{"z":35,"s":"Br","n":"Bromo","r":4,"c":17,"cat":"halogen"},{"z":36,"s":"Kr","n":"Criptônio","r":4,"c":18,"cat":"noble"},{"z":37,"s":"Rb","n":"Rubídio","r":5,"c":1,"cat":"alkali"},{"z":38,"s":"Sr","n":"Estrôncio","r":5,"c":2,"cat":"alkaline"},{"z":39,"s":"Y","n":"Ítrio","r":5,"c":3,"cat":"transition"},{"z":40,"s":"Zr","n":"Zircônio","r":5,"c":4,"cat":"transition"},{"z":41,"s":"Nb","n":"Nióbio","r":5,"c":5,"cat":"transition"},{"z":42,"s":"Mo","n":"Molibdênio","r":5,"c":6,"cat":"transition"},{"z":43,"s":"Tc","n":"Tecnécio","r":5,"c":7,"cat":"transition"},{"z":44,"s":"Ru","n":"Rutênio","r":5,"c":8,"cat":"transition"},{"z":45,"s":"Rh","n":"Ródio","r":5,"c":9,"cat":"transition"},{"z":46,"s":"Pd","n":"Paládio","r":5,"c":10,"cat":"transition"},{"z":47,"s":"Ag","n":"Prata","r":5,"c":11,"cat":"transition"},{"z":48,"s":"Cd","n":"Cádmio","r":5,"c":12,"cat":"transition"},{"z":49,"s":"In","n":"Índio","r":5,"c":13,"cat":"post"},{"z":50,"s":"Sn","n":"Estanho","r":5,"c":14,"cat":"post"},{"z":51,"s":"Sb","n":"Antimônio","r":5,"c":15,"cat":"metalloid"},{"z":52,"s":"Te","n":"Telúrio","r":5,"c":16,"cat":"metalloid"},{"z":53,"s":"I","n":"Iodo","r":5,"c":17,"cat":"halogen"},{"z":54,"s":"Xe","n":"Xenônio","r":5,"c":18,"cat":"noble"},{"z":55,"s":"Cs","n":"Césio","r":6,"c":1,"cat":"alkali"},{"z":56,"s":"Ba","n":"Bário","r":6,"c":2,"cat":"alkaline"},{"z":0,"s":"57-71","n":"Lantanídeos","r":6,"c":3,"cat":"placeholder"},{"z":72,"s":"Hf","n":"Háfnio","r":6,"c":4,"cat":"transition"},{"z":73,"s":"Ta","n":"Tântalo","r":6,"c":5,"cat":"transition"},{"z":74,"s":"W","n":"Tungstênio","r":6,"c":6,"cat":"transition"},{"z":75,"s":"Re","n":"Rênio","r":6,"c":7,"cat":"transition"},{"z":76,"s":"Os","n":"Ósmio","r":6,"c":8,"cat":"transition"},{"z":77,"s":"Ir","n":"Irídio","r":6,"c":9,"cat":"transition"},{"z":78,"s":"Pt","n":"Platina","r":6,"c":10,"cat":"transition"},{"z":79,"s":"Au","n":"Ouro","r":6,"c":11,"cat":"transition"},{"z":80,"s":"Hg","n":"Mercúrio","r":6,"c":12,"cat":"transition"},{"z":81,"s":"Tl","n":"Tálio","r":6,"c":13,"cat":"post"},{"z":82,"s":"Pb","n":"Chumbo","r":6,"c":14,"cat":"post"},{"z":83,"s":"Bi","n":"Bismuto","r":6,"c":15,"cat":"post"},{"z":84,"s":"Po","n":"Polônio","r":6,"c":16,"cat":"metalloid"},{"z":85,"s":"At","n":"Astato","r":6,"c":17,"cat":"halogen"},{"z":86,"s":"Rn","n":"Radônio","r":6,"c":18,"cat":"noble"},{"z":87,"s":"Fr","n":"Frâncio","r":7,"c":1,"cat":"alkali"},{"z":88,"s":"Ra","n":"Rádio","r":7,"c":2,"cat":"alkaline"},{"z":0,"s":"89-103","n":"Actinídeos","r":7,"c":3,"cat":"placeholder"},{"z":104,"s":"Rf","n":"Rutherfórdio","r":7,"c":4,"cat":"transition"},{"z":105,"s":"Db","n":"Dúbnio","r":7,"c":5,"cat":"transition"},{"z":106,"s":"Sg","n":"Seabórgio","r":7,"c":6,"cat":"transition"},{"z":107,"s":"Bh","n":"Bóhrio","r":7,"c":7,"cat":"transition"},{"z":108,"s":"Hs","n":"Hássio","r":7,"c":8,"cat":"transition"},{"z":109,"s":"Mt","n":"Meitnério","r":7,"c":9,"cat":"transition"},{"z":110,"s":"Ds","n":"Darmstádtio","r":7,"c":10,"cat":"transition"},{"z":111,"s":"Rg","n":"Roentgênio","r":7,"c":11,"cat":"transition"},{"z":112,"s":"Cn","n":"Copernício","r":7,"c":12,"cat":"transition"},{"z":113,"s":"Nh","n":"Nihônio","r":7,"c":13,"cat":"post"},{"z":114,"s":"Fl","n":"Fleróvio","r":7,"c":14,"cat":"post"},{"z":115,"s":"Mc","n":"Moscóvio","r":7,"c":15,"cat":"post"},{"z":116,"s":"Lv","n":"Livermório","r":7,"c":16,"cat":"post"},{"z":117,"s":"Ts","n":"Tennessino","r":7,"c":17,"cat":"halogen"},{"z":118,"s":"Og","n":"Oganessônio","r":7,"c":18,"cat":"noble"},{"z":57,"s":"La","n":"Lantânio","r":9,"c":3,"cat":"lanthanide"},{"z":58,"s":"Ce","n":"Cério","r":9,"c":4,"cat":"lanthanide"},{"z":59,"s":"Pr","n":"Praseodímio","r":9,"c":5,"cat":"lanthanide"},{"z":60,"s":"Nd","n":"Neodímio","r":9,"c":6,"cat":"lanthanide"},{"z":61,"s":"Pm","n":"Promécio","r":9,"c":7,"cat":"lanthanide"},{"z":62,"s":"Sm","n":"Samário","r":9,"c":8,"cat":"lanthanide"},{"z":63,"s":"Eu","n":"Európio","r":9,"c":9,"cat":"lanthanide"},{"z":64,"s":"Gd","n":"Gadolínio","r":9,"c":10,"cat":"lanthanide"},{"z":65,"s":"Tb","n":"Térbio","r":9,"c":11,"cat":"lanthanide"},{"z":66,"s":"Dy","n":"Disprósio","r":9,"c":12,"cat":"lanthanide"},{"z":67,"s":"Ho","n":"Hólmio","r":9,"c":13,"cat":"lanthanide"},{"z":68,"s":"Er","n":"Érbio","r":9,"c":14,"cat":"lanthanide"},{"z":69,"s":"Tm","n":"Túlio","r":9,"c":15,"cat":"lanthanide"},{"z":70,"s":"Yb","n":"Itérbio","r":9,"c":16,"cat":"lanthanide"},{"z":71,"s":"Lu","n":"Lutécio","r":9,"c":17,"cat":"lanthanide"},{"z":89,"s":"Ac","n":"Actínio","r":10,"c":3,"cat":"actinide"},{"z":90,"s":"Th","n":"Tório","r":10,"c":4,"cat":"actinide"},{"z":91,"s":"Pa","n":"Protactínio","r":10,"c":5,"cat":"actinide"},{"z":92,"s":"U","n":"Urânio","r":10,"c":6,"cat":"actinide"},{"z":93,"s":"Np","n":"Neptúnio","r":10,"c":7,"cat":"actinide"},{"z":94,"s":"Pu","n":"Plutônio","r":10,"c":8,"cat":"actinide"},{"z":95,"s":"Am","n":"Amerício","r":10,"c":9,"cat":"actinide"},{"z":96,"s":"Cm","n":"Cúrio","r":10,"c":10,"cat":"actinide"},{"z":97,"s":"Bk","n":"Berquélio","r":10,"c":11,"cat":"actinide"},{"z":98,"s":"Cf","n":"Califórnio","r":10,"c":12,"cat":"actinide"},{"z":99,"s":"Es","n":"Einsteínio","r":10,"c":13,"cat":"actinide"},{"z":100,"s":"Fm","n":"Férmio","r":10,"c":14,"cat":"actinide"},{"z":101,"s":"Md","n":"Mendelévio","r":10,"c":15,"cat":"actinide"},{"z":102,"s":"No","n":"Nobélio","r":10,"c":16,"cat":"actinide"},{"z":103,"s":"Lr","n":"Laurêncio","r":10,"c":17,"cat":"actinide"}];
+//const FALLBACK_NORMAS={"Au":{"nome":"Ouro","sym":"Au","z":79,"peso":"196,967","cat":"Metal de Transição","grupo":"11","periodo":"6","estado":"Sólido","cor":"Amarelo metálico","desc":"Metal precioso nobre, altamente maleável e dúctil, de cor amarela característica. Não oxida ao ar e é resistente à maioria dos ácidos. Amplamente usado em joalheria, eletrônica e como reserva de valor.","normas":[{"id":1,"codigo":"ABNT NBR ISO 11426","ano":2012,"titulo":"Joalheria — Determinação do teor de ouro em ligas de joias de ouro — Método por copelação (ensaio de toque)","tipo":"ABNT","escopo":"Joalheria e metais preciosos","link":"https://www.abntcatalogo.com.br/norma.aspx?ID=ABNT+NBR+ISO+11426"},{"id":2,"codigo":"ISO 11426","ano":2021,"titulo":"Jewellery and precious metals — Determination of gold in gold jewellery alloys — Cupellation method (fire assay)","tipo":"ISO","escopo":"Joalheria e metais preciosos","link":"https://www.iso.org/standard/79827.html"},{"id":3,"codigo":"ASTM E1335","ano":2020,"titulo":"Standard Test Method for Determination of Gold, Silver, and Palladium in Jewelry Alloys by ICP-OES","tipo":"ASTM","escopo":"Joalheria e espectrometria","link":"https://www.astm.org/e1335-20.html"},{"id":4,"codigo":"ISO 9202","ano":2014,"titulo":"Jewellery — Fineness of precious metal alloys","tipo":"ISO","escopo":"Ligas de metais preciosos","link":"https://www.iso.org/standard/62448.html"},{"id":5,"codigo":"ABNT NBR 16064","ano":2012,"titulo":"Joias, bijuterias e acessórios — Contaminantes inorgânicos — Determinação de metais pesados por AAS","tipo":"ABNT","escopo":"Joalheria e segurança química","link":"https://www.abntcatalogo.com.br/norma.aspx?ID=ABNT+NBR+16064"},{"id":6,"codigo":"ASTM B562","ano":2019,"titulo":"Standard Specification for Refined Gold","tipo":"ASTM","escopo":"Ouro refinado e pureza","link":"https://www.astm.org/b0562-19.html"},{"id":7,"codigo":"ISO 15093","ano":2020,"titulo":"Jewellery — Determination of high purity gold — Difference method using ICP-OES","tipo":"ISO","escopo":"Alta pureza — ICP-OES","link":"https://www.iso.org/standard/74587.html"}]},"Ag":{"nome":"Prata","sym":"Ag","z":47,"peso":"107,868","cat":"Metal de Transição","grupo":"11","periodo":"5","estado":"Sólido","cor":"Branco prateado","desc":"Metal precioso de cor branco brilhante, com a maior condutividade elétrica e térmica entre todos os metais. Amplamente usado em joalheria, eletrônica, fotografia e aplicações antimicrobianas.","normas":[{"id":1,"codigo":"ABNT NBR ISO 11427","ano":2012,"titulo":"Joalheria — Determinação do teor de prata em ligas de joias de prata — Método gravimétrico (Volhard)","tipo":"ABNT","escopo":"Joalheria e metais preciosos","link":"https://www.abntcatalogo.com.br/norma.aspx?ID=ABNT+NBR+ISO+11427"},{"id":2,"codigo":"ISO 11427","ano":2021,"titulo":"Jewellery and precious metals — Determination of silver in silver jewellery alloys — Volumetric (potentiometric) method","tipo":"ISO","escopo":"Joalheria e metais preciosos","link":"https://www.iso.org/standard/79828.html"},{"id":3,"codigo":"ABNT NBR 14942","ano":2003,"titulo":"Joias — Títulos de ligas de prata — Definição, requisitos e métodos de ensaio","tipo":"ABNT","escopo":"Ligas de prata para joalheria","link":"https://www.abntcatalogo.com.br/norma.aspx?ID=ABNT+NBR+14942"},{"id":4,"codigo":"ASTM E1336","ano":2019,"titulo":"Standard Test Method for Determination of Silver in Precious Metal Alloys by Flame Atomic Absorption Spectrometry","tipo":"ASTM","escopo":"Espectrometria de absorção atômica","link":"https://www.astm.org/e1336-19.html"},{"id":5,"codigo":"ASTM B413","ano":2014,"titulo":"Standard Specification for Refined Silver","tipo":"ASTM","escopo":"Prata refinada — especificação","link":"https://www.astm.org/b0413-14.html"},{"id":6,"codigo":"ISO 15093","ano":2020,"titulo":"Jewellery — Determination of high purity silver — Difference method using ICP-OES","tipo":"ISO","escopo":"Alta pureza — ICP-OES","link":"https://www.iso.org/standard/74587.html"},{"id":7,"codigo":"ASTM B452","ano":2022,"titulo":"Standard Specification for Silver-Copper and Silver-Copper-Zinc Brazing Filler Metals","tipo":"ASTM","escopo":"Ligas para brasagem","link":"https://www.astm.org/b0452-22.html"}]}};
+
+/* ══ BOOT ════════════════════════════════════════════ */
+loadData();
+</script>
+</body>
+</html>

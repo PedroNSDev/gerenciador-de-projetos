@@ -207,12 +207,18 @@
         <button id="nav-projetos"       class="nav-btn active" onclick="switchTab('projetos')"><span class="ni">📁</span> Projetos</button>
         <button id="nav-contribuidores" class="nav-btn"        onclick="switchTab('contribuidores')"><span class="ni">👥</span> Contribuidores</button>
         <button id="nav-anotacoes"      class="nav-btn"        onclick="switchTab('anotacoes')"><span class="ni">📝</span> Anotações</button>
-        <button id="nav-logs"           class="nav-btn hidden" onclick="switchTab('logs')"><span class="ni">📋</span> System Logs</button>
+        <button id="nav-arquivos"       class="nav-btn"        onclick="switchTab('arquivos')"><span class="ni">📂</span> Arquivos</button>
+        <button id="nav-eventos" class="nav-btn" onclick="switchTab('eventos')"><span class="ni">📅</span> Eventos </button>
+        <button id="nav-ferramentas" class="nav-btn" onclick="switchTab('ferramentas')">
+            <span class="ni">🛠️</span> Ferramentas
+        </button>
+      
 
         <hr class="sb-div">
 
         <div id="admin-section" class="hidden">
             <div class="sb-sec">Admin</div>
+              <button id="nav-logs"           class="nav-btn hidden" onclick="switchTab('logs')"><span class="ni">📋</span> System Logs</button>
             <button class="nav-btn" onclick="abrirModalAviso()"><span class="ni">📌</span> Recado Fixado</button>
             <button class="nav-btn" onclick="abrirModalAddMembro()"><span class="ni">➕</span> Adicionar Membro</button>
         </div>
@@ -225,7 +231,7 @@
     </nav>
 
     <main class="main">
-        <!-- PROJETOS -->
+        <!-- PROJETOS  📊    🛠️ -->
         <div id="tab-projetos" class="tab-c active">
             <div class="ph">
                 <div><div class="pt">Projetos</div><div class="ps">Projetos do workspace atual</div></div>
@@ -244,7 +250,50 @@
             </div>
             <div id="contrib-container"><div class="loading-c"><div class="spinner"></div></div></div>
         </div>
+        
+       <!-- ARQUIVOS(NAO FUNCIONAL ) -->
+        <div id="tab-arquivos" class="tab-c">
+            <div class="ph">
+                <div>
+                    <div class="pt">Arquivos🚧</div>
+                    <div class="ps">Upload e gerenciamento de arquivos</div>
+                </div>
+            </div>
 
+            <div style="margin-bottom:15px">
+                <input type="file" id="file-input" multiple>
+                <button class="btn btn-p" onclick="uploadArquivo()">Upload</button>
+            </div>
+
+            <div id="files-container"></div>
+        </div>  <!-- EVENTOS -->
+        <div id="tab-eventos" class="tab-c">
+        <div class="ph">
+            <div>
+                <div class="pt">Eventos</div>
+                <div class="ps">Gerencie eventos do workspace</div>
+            </div>
+            <button class="btn btn-p" onclick="criarEvento()">+ Novo Evento</button>
+        </div>
+
+        <div id="eventos-container">
+            <div class="empty-state">
+                <div class="ei">📅</div>
+                <h3>Nenhum evento ainda</h3>
+                <p>Crie eventos para organizar atividades</p>
+            </div>
+        </div>
+    </div>  <!-- QUIM DESK -->
+    <div id="tab-ferramentas" class="tab-c">
+    <div class="ph">
+        <div>
+            <div class="pt">Ferramentas</div>
+            <div class="ps">Apps locais carregados automaticamente</div>
+        </div>
+    </div>
+
+    <div id="ferramentas-container" class="notes-grid"></div>
+</div>
         <!-- ANOTAÇÕES -->
         <div id="tab-anotacoes" class="tab-c">
             <div class="ph"><div><div class="pt">Minhas Anotações</div><div class="ps">Salvas localmente no navegador</div></div></div>
@@ -389,9 +438,9 @@ async function entrarNoDashboard() {// USUARIO PAINELZIN
     carregarNotas();
 }
 
-// ─── TABS─────────────────────────────────────
+// ─── TABS───────────────────────────────────── FRENDER TABS
 function switchTab(tab) {
-    ['projetos','contribuidores','anotacoes','logs'].forEach(t => {
+    ['projetos','contribuidores','anotacoes','arquivos','logs','eventos','ferramentas'].forEach(t => {
         const c = document.getElementById(`tab-${t}`);
         const b = document.getElementById(`nav-${t}`);
         if (c) c.classList.toggle('active', t===tab);
@@ -399,6 +448,7 @@ function switchTab(tab) {
     });
     if (tab==='contribuidores') renderContribuidor();
     if (tab==='logs') carregarLogs();
+    if (tab === 'ferramentas') carregarFerramentas();
 }
 
 // ─── LOGOUT ──────────────────────────────────────
@@ -427,7 +477,7 @@ function renderizarAviso() {
             <span class="n-msg">${escH(avisoAtivo.mensagem)}</span>
         </div>
         ${adm ? `<div class="n-acts">
-            <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff;border:none" onclick="abrirModalAviso()">✏</button>
+            <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff;border:none" onclick="abrirModalAviso()">✏️️</button>
             <button class="btn btn-sm" style="background:rgba(255,255,255,.12);color:#fff;border:none" onclick="desativarAviso()">✕</button>
         </div>` : ''}
     </div>`;
@@ -487,7 +537,7 @@ function renderProj(p) {
             <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
                 <span class="badge b-acc">${(p.sessoes||[]).length} seções</span>
                 <span class="badge b-gray">${total} etapas</span>
-                ${currentUserCanEdit ? `<button class="btn btn-s btn-sm" onclick="event.stopPropagation(); editarProjeto(${p.id})">✏</button>` : ''}
+                ${currentUserCanEdit ? `<button class="btn btn-s btn-sm" onclick="event.stopPropagation(); editarProjeto(${p.id})">✏️️</button>` : ''}
             </div>
         </div>
         <div id="pb-${p.id}" class="proj-body">
@@ -495,6 +545,14 @@ function renderProj(p) {
             ${(p.sessoes||[]).map(s => renderSess(p.id, s)).join('')}
             ${currentUserCanEdit ? `<button class="btn btn-s btn-sm" onclick="abrirModalSessao(${p.id})">+ Seção</button>` : ''}
         </div>
+        <div style="margin-top:12px">
+    <input type="file" id="file-input-${p.id}" multiple>
+    <button class="btn btn-s btn-sm" onclick="UploadArquivo(${p.id})">
+        ⬆️ Upload
+    </button>
+
+    <div id="files-${p.id}" style="margin-top:10px"></div>
+</div>
     </div>`;
 }
 
@@ -516,7 +574,7 @@ function renderSess(pId, s) {
         <div id="sb-${s.id}" class="sess-body">
             ${colabs ? `<div class="colab-list">${colabs}</div>` : ''}
             <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
-                ${currentUserCanEdit ? `<button class="btn btn-s btn-sm" onclick="editarSessao(${s.id}, ${pId})">✏ Editar</button>` : ''}
+                ${currentUserCanEdit ? `<button class="btn btn-s btn-sm" onclick="editarSessao(${s.id}, ${pId})">✏️️ Editar</button>` : ''}
             </div>
             ${(s.etapas||[]).map(e => renderEtapa(pId, s.id, e)).join('')}
             ${currentUserCanEdit ? `<button class="btn btn-s btn-sm" style="margin-top:5px" onclick="abrirModalEtapa(${pId}, ${s.id})">+ Etapa</button>` : ''}
@@ -545,7 +603,7 @@ function renderEtapa(pId, sId, e) {
             <select class="fsel step-sel" onchange="updateEtapaStatus(${e.id}, this.value)">
                 ${statusOptions}
             </select>
-            ${currentUserCanEdit ? `<button class="btn btn-sm" onclick="editarEtapa(${e.id})">✏</button>` : ''}
+            ${currentUserCanEdit ? `<button class="btn btn-sm" onclick="editarEtapa(${e.id})">✏️️</button>` : ''}
         </div>
     </div>`;
 }
@@ -619,7 +677,7 @@ function uSelect(id, selId=null) {
 }
 
 function abrirModalEtapa(pId, sId, e=null) {
-    const title = e ? '✏ Editar Etapa' : '✅ Nova Etapa';
+    const title = e ? '✏️️ Editar Etapa' : '✅ Nova Etapa';
     const nome = e?.nome || '';
     const desc = e?.descricao || '';
     const resp = e?.responsavel_id || '';
@@ -701,7 +759,7 @@ async function editarProjeto(projId) {
     if (currentUserIsWorkspaceAdmin) {
         buttons.push({ label: '🗑 Deletar Projeto', cls: 'btn-s', style: 'border-color:var(--danger);color:var(--danger)', action: `deletarProjetoConfirm(${projId})` });
     }
-    abrirModal('✏ Editar Projeto', `
+    abrirModal('✏️️ Editar Projeto', `
         <div class="fg"><label class="fl">Nome</label><input id="m-pnome-edit" class="fi" value="${escH(proj.nome)}"/></div>
         <div class="fg"><label class="fl">Descrição</label><textarea id="m-pdesc-edit" class="fta">${escH(proj.descricao||'')}</textarea></div>
     `, buttons);
@@ -741,7 +799,7 @@ async function editarSessao(sessId, projId) {
     if (currentUserIsWorkspaceAdmin) {
         buttons.push({ label: '🗑 Deletar Seção', cls: 'btn-s', style: 'border-color:var(--danger);color:var(--danger)', action: `deletarSessaoConfirm(${sessId})` });
     }
-    abrirModal('✏ Editar Seção', `
+    abrirModal('✏️️ Editar Seção', `
         <div class="fg"><label class="fl">Nome</label><input id="m-snome-edit" class="fi" value="${escH(sess.nome)}"/></div>
         <div class="fg"><label class="fl">Descrição</label><input id="m-sdesc-edit" class="fi" value="${escH(sess.descricao||'')}"/></div>
         <div class="fg"><label class="fl">Colaboradores</label>
@@ -863,7 +921,68 @@ async function alterarRole(userId, newRole) {
         // Talvez recarregar dashboard se necessário
     }
 }
+// ─────  UPLOAD ARQUIVO  E RENDER──────────────────
+async function UploadArquivo(projetoId, inputElement) {
+    const files = inputElement.files;
 
+
+    if (!files.length) {
+        toast('Selecione arquivos.', 'warning');
+        return;
+    }
+    for (const file of files) {
+        const filePath = `${currentWorkspace.id}/projetos/${projetoId}/${Date.now()}-${file.name}`;
+
+        const { error } = await sb.storage
+            .from('workspace-files')
+            .upload(filePath, file);
+
+        if (error) {
+            toast(`Erro ao enviar ${file.name}`, 'error');
+            continue;
+        }
+        await sb.from('arquivos').insert({
+            nome: file.name,
+            path: filePath,
+            projeto_id: projetoId,
+            workspace_id: currentWorkspace.id,
+            criado_por: currentUser.id
+        });
+    }
+    toast('Upload concluído!');
+    inputElement.value = '';
+}
+async function CarregarArquivos(projetoId, containerElement) {
+    containerElement.innerHTML = 'Carregando...';
+
+    const { data, error } = await sb
+        .from('arquivos')
+        .select('*')
+        .eq('projeto_id', projetoId)
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        containerElement.innerHTML = 'Erro ao carregar';
+        return;
+    }
+
+    if (!data.length) {
+        containerElement.innerHTML = '<div class="fhint">Sem arquivos</div>';
+        return;
+    }
+
+    containerElement.innerHTML = data.map(f => {
+        const { data: urlData } = sb.storage
+            .from('workspace-files')
+            .getPublicUrl(f.path);
+
+        return `
+        <div style="margin-top:6px">
+            📄 ${f.nome}
+            <a href="${urlData.publicUrl}" target="_blank">Abrir</a>
+        </div>`;
+    }).join('');
+}
 // ─── ADMIN: ADICIONAR COLABORADOR ─────────────────────
 function abrirModalAddMembro() {
     abrirModal('➕ Adicionar Membro', `
@@ -1021,7 +1140,35 @@ function deletarNota(id) {
     renderNotes();
     toast('Nota removida.');
 }
+// ─── FERRAMENTAS LOAD ───────────────────────────────────────
+async function carregarFerramentas() {
+    const container = document.getElementById('ferramentas-container');
+    container.innerHTML = '<div class="loading-c"><div class="spinner"></div></div>';
 
+    try {
+        const res = await fetch('Ferramentas/ferramentas.json');
+        const tools = await res.json();
+
+        if (!tools.length) {
+            container.innerHTML = '<div class="empty-state">Nenhuma ferramenta encontrada</div>';
+            return;
+        }
+
+        container.innerHTML = tools.map(t => `
+            <div class="note-card" onclick="abrirFerramenta('${t.path}')">
+                <div class="note-title">${t.icone || '🛠️'} ${t.nome}</div>
+                <div class="note-meta">Clique para abrir</div>
+            </div>
+        `).join('');
+
+    } catch (err) {
+        container.innerHTML = '<div class="empty-state">Erro ao carregar ferramentas</div>';
+    }
+}
+
+function abrirFerramenta(path) {
+    window.open(path, '_blank');
+}
 // ─── MODAL ───────────────────────────────────────
 function abrirModal(title, body, buttons=[]) {
     const modalTitle = document.getElementById('m-title');
@@ -1045,7 +1192,56 @@ function toast(msg, type='success') {
     document.getElementById('toast-ctr').appendChild(t);
     setTimeout(() => t.remove(), 4000);
 }
+// ─── EVENTOS so em JS por enquanto     ───────────────────────────────────────
+let eventos = [];
 
+function criarEvento() {
+    abrirModal('📅 Novo Evento', `
+        <div class="fg">
+            <label class="fl">Nome</label>
+            <input id="ev-nome" class="fi">
+        </div>
+        <div class="fg">
+            <label class="fl">Data</label>
+            <input id="ev-data" type="date" class="fi">
+        </div>
+    `, [
+        { label: 'Criar', cls: 'btn-p', action: 'salvarEvento()' },
+        { label: 'Cancelar', cls: 'btn-s', action: 'fecharModal()' }
+    ]);
+}
+
+function salvarEvento() {
+    const nome = document.getElementById('ev-nome').value;
+    const data = document.getElementById('ev-data').value;
+
+    if (!nome || !data) {
+        toast('Preencha tudo', 'warning');
+        return;
+    }
+
+    eventos.push({ nome, data });
+    fecharModal();
+    renderEventos();
+}
+
+function renderEventos() {
+    const container = document.getElementById('eventos-container');
+
+    if (!eventos.length) {
+        container.innerHTML = `<div class="empty-state">Sem eventos</div>`;
+        return;
+    }
+
+    container.innerHTML = eventos.map(e => `
+        <div class="proj-card">
+            <div class="proj-hdr">
+                <div class="proj-name">📅 ${e.nome}</div>
+                <div class="badge b-acc">${e.data}</div>
+            </div>
+        </div>
+    `).join('');
+}
 // ─── UTILS ───────────────────────────────────────
 function escH(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function userColor(name) {
