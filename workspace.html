@@ -218,7 +218,7 @@
         .toast{background:#1e293b;color:#fff;padding:10px 15px;border-radius:var(--rsm);font-size:.83rem;box-shadow:var(--sh-md);animation:tIn .3s ease;border-left:3px solid var(--ok);max-width:290px}
         .toast.error{border-left-color:var(--danger)} .toast.warning{border-left-color:var(--warn)}
         @keyframes tIn{from{opacity:0;transform:translateX(110%)}to{opacity:1;transform:translateX(0)}}
-        
+
         /* ── MISC ── */
         .empty-state{text-align:center;padding:46px 20px;color:var(--muted)}
         .ei{font-size:2.3rem;margin-bottom:11px} .empty-state h3{font-weight:600;margin-bottom:4px} .empty-state p{font-size:.82rem}
@@ -227,6 +227,63 @@
         .loading-c{text-align:center;padding:54px 20px;color:var(--muted)}
         .code-box{background:#f1f5f9;border-radius:var(--rsm);padding:12px 15px;font-family:var(--mono);font-size:1.2rem;font-weight:700;letter-spacing:.18em;color:var(--acc);text-align:center;margin:10px 0}
         .n-hint{font-size:.77rem;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:var(--rsm);padding:7px 13px;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+
+        /* ── HOME ── */
+        @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        .home-grid{display:grid;grid-template-columns:1fr 340px;gap:22px;align-items:start}
+        @media(max-width:960px){.home-grid{grid-template-columns:1fr}}
+        .home-greeting{font-size:1.55rem;font-weight:800;margin-bottom:2px}
+        .home-sub{color:var(--muted);font-size:.87rem;margin-bottom:22px}
+        .home-col-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+        .my-etapa-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:9px;display:flex;align-items:flex-start;gap:12px;box-shadow:var(--sh);transition:.2s}
+        .my-etapa-card:hover{box-shadow:var(--sh-md);border-color:#c7d2fe;transform:translateY(-1px)}
+        .my-etapa-bar{width:4px;min-height:44px;border-radius:3px;flex-shrink:0;margin-top:2px}
+        .my-etapa-nome{font-weight:600;font-size:.9rem;margin-bottom:2px}
+        .my-etapa-ctx{font-size:.76rem;color:var(--muted);margin-bottom:6px}
+        .my-etapa-foot{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+        .ev-mini-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:8px;display:flex;align-items:center;gap:11px;box-shadow:var(--sh)}
+        .ev-mini-date{background:linear-gradient(135deg,var(--acc),#6366f1);color:#fff;border-radius:7px;padding:6px 10px;text-align:center;flex-shrink:0;min-width:44px}
+        .ev-mini-day{font-size:1.1rem;font-weight:800;line-height:1}
+        .ev-mini-mon{font-size:.6rem;text-transform:uppercase;letter-spacing:.06em;opacity:.85}
+        .ev-mini-nome{font-weight:600;font-size:.86rem}
+        .ev-mini-hora{font-size:.74rem;color:var(--acc);margin-top:2px}
+        .ev-past .ev-mini-date{background:linear-gradient(135deg,#94a3b8,#64748b)}
+        .home-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+        .home-stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;text-align:center;box-shadow:var(--sh)}
+        .home-stat-val{font-size:1.7rem;font-weight:800;color:var(--acc)}
+        .home-stat-lbl{font-size:.72rem;color:var(--muted);margin-top:2px}
+        /* staggered anim helpers */
+        .anim-item{opacity:0;animation:fadeUp .4s ease forwards}
+
+        /* ── PROGRESSO ── */
+        .prog-table{width:100%;border-collapse:separate;border-spacing:0 6px}
+        .prog-table th{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:6px 12px;text-align:left;border-bottom:2px solid var(--border)}
+        .prog-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);transition:.15s}
+        .prog-row:hover{box-shadow:var(--sh-md);border-color:#c7d2fe}
+        .prog-row td{padding:11px 13px;font-size:.85rem;vertical-align:middle}
+        .prog-row td:first-child{border-radius:var(--rsm) 0 0 var(--rsm)}
+        .prog-row td:last-child{border-radius:0 var(--rsm) var(--rsm) 0}
+        .prog-filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+        .prog-filter-btn{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:.78rem;font-weight:600;cursor:pointer;transition:.15s;font-family:var(--font)}
+        .prog-filter-btn.active,.prog-filter-btn:hover{background:var(--acc);color:#fff;border-color:var(--acc)}
+        /* ── ARQUIVO MANAGER ── */
+        .ark-pasta-btn{display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;border:none;background:transparent;border-radius:8px;font-family:var(--font);font-size:.84rem;font-weight:500;color:var(--text);cursor:pointer;transition:.15s;text-align:left;position:relative}
+        .ark-pasta-btn:hover{background:var(--acc-lt);color:var(--acc)}
+        .ark-pasta-btn.active{background:var(--acc);color:#fff}
+        .ark-pasta-btn .ark-vis{font-size:.6rem;margin-left:auto;opacity:.7}
+        .ark-file-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+        .ark-file-card{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:.2s;position:relative}
+        .ark-file-card:hover{border-color:var(--acc);box-shadow:var(--sh-md);transform:translateY(-2px)}
+        .ark-file-thumb{height:100px;display:flex;align-items:center;justify-content:center;background:#f8faff;font-size:2.8rem;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+        .ark-file-thumb img{width:100%;height:100%;object-fit:cover}
+        .ark-file-body{padding:9px 10px}
+        .ark-file-name{font-size:.78rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .ark-file-meta{font-size:.68rem;color:var(--muted);margin-top:2px}
+        .ark-vis-badge{position:absolute;top:6px;right:6px;padding:2px 7px;border-radius:20px;font-size:.6rem;font-weight:700}
+        .ark-vis-pub{background:#dcfce7;color:#166534}
+        .ark-vis-priv{background:#fce7f3;color:#9d174d}
+        .ark-empty{text-align:center;padding:50px 20px;color:var(--muted);background:var(--surface);border-radius:12px;border:2px dashed var(--border)}
     </style>
 </head>
 <body>
@@ -244,7 +301,9 @@
         </div>
 
         <div class="sb-sec">Principal</div>
-        <button id="nav-projetos"       class="nav-btn active" onclick="switchTab('projetos')"><span class="ni">📁</span> Projetos</button>
+        <button id="nav-home"           class="nav-btn active" onclick="switchTab('home')"><span class="ni">🏠</span> Início</button>
+        <button id="nav-projetos"       class="nav-btn"        onclick="switchTab('projetos')"><span class="ni">📁</span> Projetos</button>
+        <button id="nav-progresso"      class="nav-btn"        onclick="switchTab('progresso')"><span class="ni">📊</span> Progresso</button>
         <button id="nav-contribuidores" class="nav-btn"        onclick="switchTab('contribuidores')"><span class="ni">👥</span> Contribuidores</button>
         <button id="nav-anotacoes"      class="nav-btn"        onclick="switchTab('anotacoes')"><span class="ni">📝</span> Anotações</button>
         <button id="nav-arquivos"       class="nav-btn"        onclick="switchTab('arquivos')"><span class="ni">📂</span> Arquivos</button>
@@ -268,8 +327,13 @@
     </nav>
 
     <main class="main">
+        <!-- HOME -->
+        <div id="tab-home" class="tab-c active">
+            <div id="home-container"></div>
+        </div>
+
         <!-- PROJETOS -->
-        <div id="tab-projetos" class="tab-c active">
+        <div id="tab-projetos" class="tab-c">
             <div class="ph">
                 <div><div class="pt">Projetos</div><div class="ps">Projetos do workspace atual</div></div>
                 <button id="btn-novo-proj" class="btn btn-p hidden" onclick="abrirModalProjeto()">+ Novo Projeto</button>
@@ -278,6 +342,14 @@
             <div id="projetos-container">
                 <div class="loading-c"><div class="spinner"></div><p style="margin-top:11px">Carregando...</p></div>
             </div>
+        </div>
+
+        <!-- PROGRESSO -->
+        <div id="tab-progresso" class="tab-c">
+            <div class="ph">
+                <div><div class="pt">Progresso</div><div class="ps">Todas as etapas do workspace, ordenadas por prazo</div></div>
+            </div>
+            <div id="progresso-container"><div class="loading-c"><div class="spinner"></div></div></div>
         </div>
 
         <!-- CONTRIBUIDORES -->
@@ -291,23 +363,23 @@
         <!-- ARQUIVOS -->
         <div id="tab-arquivos" class="tab-c">
             <div class="ph">
-                <div><div class="pt">Arquivos</div><div class="ps">Upload e gerenciamento de arquivos do workspace</div></div>
-            </div>
-            <div style="margin-bottom:18px">
-                <div class="upload-zone">
-                    <span style="font-size:1.4rem">📂</span>
-                    <div style="flex:1">
-                        <div style="font-weight:600;font-size:.88rem;margin-bottom:4px">Selecione arquivos para upload</div>
-                        <input type="file" id="ws-file-input" multiple>
-                    </div>
-                    <select id="ws-file-proj" class="fsel" style="width:180px;padding:8px 12px">
-                        <option value="">— Projeto (opcional) —</option>
-                    </select>
-                    <button class="btn btn-p btn-sm" onclick="uploadArquivoWorkspace()">⬆️ Upload</button>
+                <div><div class="pt">Arquivos</div><div class="ps">Gerencie pastas e arquivos do workspace</div></div>
+                <div style="display:flex;gap:8px">
+                    <button class="btn btn-s btn-sm" onclick="abrirModalPasta()">📁 Nova Pasta</button>
+                    <button class="btn btn-p btn-sm" onclick="abrirModalUpload()">⬆️ Upload</button>
                 </div>
             </div>
-            <div id="ws-files-container">
-                <div class="loading-c"><div class="spinner"></div></div>
+            <div style="display:grid;grid-template-columns:220px 1fr;gap:18px;align-items:start">
+                <!-- Painel esquerdo: pastas -->
+                <div id="ark-pastas-panel" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--sh)">
+                    <div style="padding:12px 14px;border-bottom:1px solid var(--border);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Pastas</div>
+                    <div id="ark-pastas-list" style="padding:8px"></div>
+                </div>
+                <!-- Painel direito: arquivos -->
+                <div>
+                    <div id="ark-breadcrumb" style="font-size:.82rem;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:6px"></div>
+                    <div id="ark-files-grid"></div>
+                </div>
             </div>
         </div>
 
@@ -452,11 +524,12 @@ async function entrarNoDashboard() {
     await renderizarProjetos();
     carregarNotas();
     popularSelectProjetos();
+    await carregarHome();
 }
 
 // ─── TABS ─────────────────────────────────────────
 function switchTab(tab) {
-    ['projetos','contribuidores','anotacoes','arquivos','logs','eventos','ferramentas'].forEach(t => {
+    ['home','projetos','progresso','contribuidores','anotacoes','arquivos','logs','eventos','ferramentas'].forEach(t => {
         const c = document.getElementById(`tab-${t}`);
         const b = document.getElementById(`nav-${t}`);
         if (c) c.classList.toggle('active', t===tab);
@@ -467,6 +540,8 @@ function switchTab(tab) {
     if (tab === 'ferramentas') carregarFerramentas();
     if (tab === 'eventos') carregarEventos();
     if (tab === 'arquivos') carregarArquivosWorkspace();
+    if (tab === 'home') carregarHome();
+    if (tab === 'progresso') carregarProgresso();
 }
 
 // ─── LOGOUT ───────────────────────────────────────
@@ -834,140 +909,410 @@ async function updateEtapaStatus(eId, status) {
     await renderizarProjetos();
 }
 
-// ─── ARQUIVOS ─────────────────────────────────────
+// ─── HOME ─────────────────────────────────────────
+async function carregarHome() {
+    const c = document.getElementById('home-container');
+    c.innerHTML = '<div class="loading-c"><div class="spinner"></div></div>';
+
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const hora = hoje.getHours();
+    const saudacao = hora < 12 ? 'Bom dia' : hora < 18 ? 'Boa tarde' : 'Boa noite';
+    const primeiroNome = currentUser.nome.split(' ')[0];
+
+    // Buscar etapas onde o usuário é responsável
+    const { data: etapas } = await sb.from('etapas')
+        .select('id, nome, status, prazo, prioridade, sessoes!inner(id, nome, projeto_id, projetos!inner(id, nome, workspace_id))')
+        .eq('responsavel_id', currentUser.id)
+        .eq('sessoes.projetos.workspace_id', currentWorkspace.id)
+        .order('prazo', { ascending: true, nullsFirst: false });
+
+    // Buscar próximos eventos (próximos 30 dias)
+    const em30 = new Date(hoje); em30.setDate(em30.getDate() + 60);
+    const { data: eventos } = await sb.from('eventos')
+        .select('*')
+        .eq('workspace_id', currentWorkspace.id)
+        .gte('data', hoje.toISOString().slice(0,10))
+        .lte('data', em30.toISOString().slice(0,10))
+        .order('data', { ascending: true })
+        .limit(8);
+
+    // Stats rápidas
+    const minhasEtapas = etapas || [];
+    const pendentes = minhasEtapas.filter(e => e.status !== 'Concluído');
+    const concluidas = minhasEtapas.filter(e => e.status === 'Concluído');
+    const vencidas = pendentes.filter(e => e.prazo && new Date(e.prazo+'T00:00:00') < hoje);
+
+    function statusColor(s) {
+        return s==='Concluído' ? 'var(--ok)' : s==='Em andamento' ? 'var(--warn)' : 'var(--muted)';
+    }
+
+    function renderMinhaEtapa(e, idx) {
+        const projNome = e.sessoes?.projetos?.nome || '—';
+        const sessNome = e.sessoes?.nome || '—';
+        return `<div class="my-etapa-card anim-item" style="animation-delay:${0.05 + idx*0.06}s">
+            <div class="my-etapa-bar" style="background:${statusColor(e.status)}"></div>
+            <div style="flex:1;min-width:0">
+                <div class="my-etapa-nome">${escH(e.nome)}</div>
+                <div class="my-etapa-ctx">📁 ${escH(projNome)} › ${escH(sessNome)}</div>
+                <div class="my-etapa-foot">
+                    <span class="badge ${e.status==='Concluído'?'b-green':e.status==='Em andamento'?'b-amber':'b-gray'}">${e.status}</span>
+                    ${e.prazo
+                        ? `<span class="badge ${prazoClass(e.prazo, e.status)}">${prazoLabel(e.prazo, e.status)}</span>`
+                        : `<span class="badge b-gray">📅 Sem prazo</span>`}
+                </div>
+            </div>
+        </div>`;
+    }
+
+    function renderEvMini(ev, idx) {
+        const d = new Date(ev.data + 'T00:00:00');
+        const dia = d.getDate().toString().padStart(2,'0');
+        const mes = d.toLocaleDateString('pt-BR',{month:'short'}).replace('.','');
+        return `<div class="ev-mini-card anim-item" style="animation-delay:${0.1 + idx*0.06}s">
+            <div class="ev-mini-date">
+                <div class="ev-mini-day">${dia}</div>
+                <div class="ev-mini-mon">${mes}</div>
+            </div>
+            <div>
+                <div class="ev-mini-nome">${escH(ev.nome)}</div>
+                ${ev.hora ? `<div class="ev-mini-hora">🕐 ${ev.hora.slice(0,5)}</div>` : ''}
+                ${ev.descricao ? `<div style="font-size:.74rem;color:var(--muted);margin-top:2px">${escH(ev.descricao)}</div>` : ''}
+            </div>
+        </div>`;
+    }
+
+    // Aviso fixado inline na home
+    const avisoHtml = avisoAtivo
+        ? `<div class="notice-wrap anim-item" style="animation-delay:.02s;margin-bottom:20px">
+            <span class="n-icon">📌</span>
+            <div class="n-text">
+                <span class="n-label">Recado do Administrador</span>
+                <span class="n-msg">${escH(avisoAtivo.mensagem)}</span>
+            </div>
+           </div>`
+        : '';
+
+    c.innerHTML = `
+        <div class="anim-item" style="animation-delay:0s">
+            <div class="home-greeting">${saudacao}, ${escH(primeiroNome)}! 👋</div>
+            <div class="home-sub">${new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})} · ${currentWorkspace.nome}</div>
+        </div>
+
+        ${avisoHtml}
+
+        <div class="home-stat-row anim-item" style="animation-delay:.04s">
+            <div class="home-stat">
+                <div class="home-stat-val" style="color:var(--acc)">${pendentes.length}</div>
+                <div class="home-stat-lbl">Pendentes</div>
+            </div>
+            <div class="home-stat">
+                <div class="home-stat-val" style="color:var(--ok)">${concluidas.length}</div>
+                <div class="home-stat-lbl">Concluídas</div>
+            </div>
+            <div class="home-stat">
+                <div class="home-stat-val" style="color:${vencidas.length?'var(--danger)':'var(--muted)'}">${vencidas.length}</div>
+                <div class="home-stat-lbl">Vencidas</div>
+            </div>
+        </div>
+
+        <div class="home-grid">
+            <div>
+                <div class="home-col-title">✅ Minhas etapas (${minhasEtapas.length})</div>
+                ${minhasEtapas.length
+                    ? minhasEtapas.map((e,i) => renderMinhaEtapa(e,i)).join('')
+                    : `<div class="note-empty" style="padding:28px 20px"><div class="ei">🎉</div>Nenhuma etapa atribuída a você.</div>`}
+            </div>
+            <div>
+                <div class="home-col-title">📅 Próximos eventos</div>
+                ${(eventos||[]).length
+                    ? eventos.map((ev,i) => renderEvMini(ev,i)).join('')
+                    : `<div class="note-empty" style="padding:28px 20px"><div class="ei">📭</div>Sem eventos próximos.</div>`}
+            </div>
+        </div>`;
+}
+
+// ─── PROGRESSO ────────────────────────────────────
+let progressoFiltro = 'todos';
+
+async function carregarProgresso() {
+    const c = document.getElementById('progresso-container');
+    c.innerHTML = '<div class="loading-c"><div class="spinner"></div></div>';
+
+    // Busca TODAS etapas do workspace com prazo e sem prazo, ordenadas por prazo ASC (nulls last)
+    const { data: etapas, error } = await sb.from('etapas')
+        .select('id, nome, status, prazo, prioridade, responsavel_id, sessoes!inner(id, nome, projeto_id, projetos!inner(id, nome, workspace_id))')
+        .eq('sessoes.projetos.workspace_id', currentWorkspace.id);
+
+    if (error) { c.innerHTML = `<div class="empty-state"><div class="ei">⚠️</div><h3>Erro</h3><p>${escH(error.message)}</p></div>`; return; }
+
+    renderProgresso(etapas || []);
+}
+
+function renderProgresso(etapas) {
+    const c = document.getElementById('progresso-container');
+    if (!etapas.length) {
+        c.innerHTML = `<div class="empty-state"><div class="ei">📊</div><h3>Nenhuma etapa ainda</h3><p>Crie etapas nos projetos para ver o progresso aqui.</p></div>`;
+        return;
+    }
+
+    // Ordenar: com prazo primeiro por data ASC, depois sem prazo
+    const comPrazo = etapas.filter(e => e.prazo).sort((a,b) => a.prazo.localeCompare(b.prazo));
+    const semPrazo = etapas.filter(e => !e.prazo).sort((a,b) => a.nome.localeCompare(b.nome));
+    const todas = [...comPrazo, ...semPrazo];
+
+    // Filtro ativo
+    const filtradas = progressoFiltro === 'todos' ? todas
+        : progressoFiltro === 'pendente' ? todas.filter(e => e.status === 'Não iniciado')
+        : progressoFiltro === 'andamento' ? todas.filter(e => e.status === 'Em andamento')
+        : todas.filter(e => e.status === 'Concluído');
+
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const total = etapas.length;
+    const concluidas = etapas.filter(e => e.status === 'Concluído').length;
+    const pct = total ? Math.round(concluidas/total*100) : 0;
+
+    function renderRow(e, idx) {
+        const resp = wsMembers.find(u => u.id === e.responsavel_id);
+        const proj = e.sessoes?.projetos?.nome || '—';
+        const sess = e.sessoes?.nome || '—';
+        return `<tr class="prog-row anim-item" style="animation-delay:${idx*0.03}s">
+            <td style="max-width:200px">
+                <div style="font-weight:600;font-size:.86rem">${escH(e.nome)}</div>
+                <div style="font-size:.74rem;color:var(--muted);margin-top:1px">📁 ${escH(proj)}</div>
+            </td>
+            <td style="font-size:.8rem;color:var(--muted)">${escH(sess)}</td>
+            <td>${resp ? `<span class="badge b-purple">${escH(resp.nome)}</span>` : '<span style="color:var(--muted);font-size:.78rem">—</span>'}</td>
+            <td>${e.prazo
+                ? `<span class="badge ${prazoClass(e.prazo, e.status)}">${prazoLabel(e.prazo, e.status)}</span>`
+                : `<span class="badge b-gray">Sem prazo</span>`}</td>
+            <td><span class="badge ${e.status==='Concluído'?'b-green':e.status==='Em andamento'?'b-amber':'b-gray'}">${e.status}</span></td>
+            <td><span class="badge b-gray">${e.prioridade ?? 0}</span></td>
+        </tr>`;
+    }
+
+    c.innerHTML = `
+        <!-- Barra de progresso geral -->
+        <div class="anim-item" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:18px;box-shadow:var(--sh)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <div style="font-weight:700;font-size:.9rem">Progresso geral do workspace</div>
+                <div style="font-weight:800;font-size:1.1rem;color:var(--acc)">${pct}%</div>
+            </div>
+            <div style="height:10px;background:var(--border);border-radius:10px;overflow:hidden">
+                <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--acc),#10b981);border-radius:10px;transition:width .6s ease"></div>
+            </div>
+            <div style="font-size:.75rem;color:var(--muted);margin-top:7px">${concluidas} de ${total} etapas concluídas</div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="prog-filters">
+            <span style="font-size:.78rem;font-weight:600;color:var(--muted)">Filtrar:</span>
+            ${['todos','pendente','andamento','concluido'].map(f => `
+                <button class="prog-filter-btn ${progressoFiltro===f?'active':''}"
+                    onclick="progressoFiltro='${f}'; carregarProgresso()">
+                    ${f==='todos'?'Todos':f==='pendente'?'Não iniciado':f==='andamento'?'Em andamento':'Concluído'}
+                    <span style="margin-left:4px;opacity:.7">(${
+                        f==='todos'?total:
+                        f==='pendente'?etapas.filter(e=>e.status==='Não iniciado').length:
+                        f==='andamento'?etapas.filter(e=>e.status==='Em andamento').length:
+                        concluidas
+                    })</span>
+                </button>`).join('')}
+        </div>
+
+        <!-- Tabela -->
+        ${filtradas.length ? `
+        <div style="overflow-x:auto">
+            <table class="prog-table">
+                <thead>
+                    <tr>
+                        <th>Etapa</th>
+                        <th>Seção</th>
+                        <th>Responsável</th>
+                        <th>Prazo</th>
+                        <th>Status</th>
+                        <th>Prio.</th>
+                    </tr>
+                </thead>
+                <tbody>${filtradas.map((e,i) => renderRow(e,i)).join('')}</tbody>
+            </table>
+        </div>` : `<div class="empty-state"><div class="ei">🔍</div><h3>Nenhuma etapa neste filtro</h3></div>`}`;
+}
+
+// ─── ARQUIVO MANAGER ──────────────────────────────
+let arkPastas = [];        // pastas carregadas
+let arkPastaAtual = null;  // null = raiz (todos visíveis ao usuário)
+
 function fileIcon(nome) {
-    const ext = nome.split('.').pop().toLowerCase();
+    const ext = (nome||'').split('.').pop().toLowerCase();
     const map = { pdf:'📄', doc:'📝', docx:'📝', xls:'📊', xlsx:'📊', ppt:'📋', pptx:'📋',
         png:'🖼️', jpg:'🖼️', jpeg:'🖼️', gif:'🖼️', webp:'🖼️', svg:'🎨',
         mp4:'🎬', mov:'🎬', avi:'🎬', mp3:'🎵', zip:'🗜️', rar:'🗜️', txt:'📃' };
     return map[ext] || '📁';
 }
 
-// Upload na aba de projetos (por projeto)
-async function uploadArquivoProjeto(projetoId) {
-    const input = document.getElementById(`proj-file-input-${projetoId}`);
-    const files = Array.from(input?.files || []);
-    if (!files.length) { toast('Selecione ao menos um arquivo.', 'warning'); return; }
-
-    let sucesso = 0, erros = 0;
-    for (const file of files) {
-        const filePath = `${currentWorkspace.id}/projetos/${projetoId}/${Date.now()}-${file.name}`;
-        const { error: uploadErr } = await sb.storage.from('workspace-files').upload(filePath, file);
-        if (uploadErr) { erros++; console.error(uploadErr); continue; }
-        const { error: dbErr } = await sb.from('arquivos').insert({
-            nome: file.name, path: filePath,
-            projeto_id: projetoId, workspace_id: currentWorkspace.id, criado_por: currentUser.id
-        });
-        if (dbErr) { erros++; continue; }
-        sucesso++;
-    }
-    input.value = '';
-    if (sucesso) { toast(`${sucesso} arquivo(s) enviado(s)! 📎`); await addLog(`Enviou ${sucesso} arquivo(s) para projeto #${projetoId}`); }
-    if (erros) toast(`${erros} arquivo(s) falharam.`, 'error');
-    await carregarArquivosProjeto(projetoId);
+function isImage(nome) {
+    return /\.(png|jpg|jpeg|gif|webp|svg)$/i.test(nome||'');
 }
 
-// Carregar arquivos de um projeto específico (dentro do card)
-async function carregarArquivosProjeto(projetoId) {
-    const container = document.getElementById(`proj-files-${projetoId}`);
-    if (!container) return;
-
-    const { data, error } = await sb.from('arquivos').select('*')
-        .eq('projeto_id', projetoId)
-        .order('created_at', { ascending: false });
-
-    if (error) { container.innerHTML = '<div style="font-size:.8rem;color:var(--danger)">Erro ao carregar arquivos.</div>'; return; }
-    if (!data?.length) { container.innerHTML = '<div style="font-size:.8rem;color:var(--muted);padding:4px 0">Nenhum arquivo ainda.</div>'; return; }
-
-    container.innerHTML = data.map(f => {
-        const { data: urlData } = sb.storage.from('workspace-files').getPublicUrl(f.path);
-        return `<div class="file-list-item">
-            <span class="file-icon">${fileIcon(f.nome)}</span>
-            <div class="file-info">
-                <div class="file-name">${escH(f.nome)}</div>
-                <div class="file-date">${new Date(f.created_at).toLocaleDateString('pt-BR')}</div>
-            </div>
-            <div class="file-acts">
-                <a href="${urlData.publicUrl}" target="_blank" class="btn btn-s btn-sm">Abrir</a>
-                ${currentUserCanEdit ? `<button class="btn btn-sm" style="background:none;border:1px solid var(--danger);color:var(--danger)" onclick="deletarArquivo(${f.id},'${f.path}',${projetoId})">🗑</button>` : ''}
-            </div>
-        </div>`;
-    }).join('');
+function fmtBytes(b) {
+    if (!b) return '';
+    if (b < 1024) return b + ' B';
+    if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+    return (b/1048576).toFixed(1) + ' MB';
 }
 
-// Upload na aba de Arquivos (workspace geral)
-async function uploadArquivoWorkspace() {
-    const input = document.getElementById('ws-file-input');
-    const files = Array.from(input?.files || []);
-    const projId = document.getElementById('ws-file-proj')?.value || null;
-    if (!files.length) { toast('Selecione ao menos um arquivo.', 'warning'); return; }
-
-    let sucesso = 0, erros = 0;
-    for (const file of files) {
-        const pasta = projId ? `projetos/${projId}` : 'geral';
-        const filePath = `${currentWorkspace.id}/${pasta}/${Date.now()}-${file.name}`;
-        const { error: uploadErr } = await sb.storage.from('workspace-files').upload(filePath, file);
-        if (uploadErr) { erros++; continue; }
-        const { error: dbErr } = await sb.from('arquivos').insert({
-            nome: file.name, path: filePath,
-            projeto_id: projId ? parseInt(projId) : null,
-            workspace_id: currentWorkspace.id, criado_por: currentUser.id
-        });
-        if (dbErr) { erros++; continue; }
-        sucesso++;
-    }
-    input.value = '';
-    if (sucesso) { toast(`${sucesso} arquivo(s) enviado(s)! 📎`); await addLog(`Enviou ${sucesso} arquivo(s) ao workspace`); }
-    if (erros) toast(`${erros} arquivo(s) falharam.`, 'error');
-    await carregarArquivosWorkspace();
-}
-
-// Carregar todos os arquivos do workspace (aba Arquivos)
 async function carregarArquivosWorkspace() {
-    const c = document.getElementById('ws-files-container');
-    c.innerHTML = '<div class="loading-c"><div class="spinner"></div></div>';
-
-    const { data, error } = await sb.from('arquivos').select('*, projetos(nome)')
+    // Carregar pastas e ir para raiz
+    const { data: pastas } = await sb.from('pastas_arquivos')
+        .select('*')
         .eq('workspace_id', currentWorkspace.id)
-        .order('created_at', { ascending: false });
+        .order('nome');
 
-    if (error) { c.innerHTML = '<div class="empty-state"><h3>Erro ao carregar</h3></div>'; return; }
-    if (!data?.length) {
-        c.innerHTML = `<div class="empty-state"><div class="ei">📂</div><h3>Nenhum arquivo ainda</h3><p>Faça upload de arquivos acima.</p></div>`;
+    // Filtrar: públicas para todos, privadas só pro dono
+    arkPastas = (pastas || []).filter(p =>
+        p.visibilidade === 'publico' || p.criado_por === currentUser.id
+    );
+
+    renderArkPastas();
+    await renderArkFiles(null);
+}
+
+function renderArkPastas() {
+    const el = document.getElementById('ark-pastas-list');
+    if (!el) return;
+
+    const rows = [
+        `<button class="ark-pasta-btn ${arkPastaAtual===null?'active':''}" onclick="navPasta(null)">
+            <span>🗂</span> Todos os arquivos
+         </button>`
+    ];
+
+    if (!arkPastas.length) {
+        rows.push(`<div style="padding:8px 10px;font-size:.77rem;color:var(--muted)">Nenhuma pasta ainda.</div>`);
+    } else {
+        arkPastas.forEach(p => {
+            const isOwner = p.criado_por === currentUser.id;
+            rows.push(`<button class="ark-pasta-btn ${arkPastaAtual===p.id?'active':''}" onclick="navPasta(${p.id})">
+                <span>${p.visibilidade==='privado'?'🔒':'📁'}</span>
+                <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escH(p.nome)}</span>
+                <span class="ark-vis">${p.visibilidade==='privado'?'privada':''}</span>
+                ${isOwner&&currentUserCanEdit?`<span onclick="event.stopPropagation();menuPasta(${p.id})" style="padding:0 3px;border-radius:4px;opacity:.5;transition:.1s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">⋯</span>`:''}
+            </button>`);
+        });
+    }
+
+    el.innerHTML = rows.join('');
+}
+
+async function navPasta(pastaId) {
+    arkPastaAtual = pastaId;
+    renderArkPastas();
+    await renderArkFiles(pastaId);
+}
+
+async function renderArkFiles(pastaId) {
+    const grid = document.getElementById('ark-files-grid');
+    const bc   = document.getElementById('ark-breadcrumb');
+    if (!grid) return;
+
+    grid.innerHTML = '<div class="loading-c"><div class="spinner"></div></div>';
+
+    // Breadcrumb
+    if (pastaId === null) {
+        bc.innerHTML = `<span style="color:var(--text);font-weight:600">Todos os arquivos</span>`;
+    } else {
+        const pasta = arkPastas.find(p => p.id === pastaId);
+        bc.innerHTML = `<span style="cursor:pointer;color:var(--acc)" onclick="navPasta(null)">Todos os arquivos</span>
+            <span>›</span>
+            <span style="font-weight:600">${escH(pasta?.nome||'Pasta')}</span>
+            ${pasta?.visibilidade==='privado'?'<span class="badge b-rose" style="font-size:.65rem">🔒 Privada</span>':'<span class="badge b-green" style="font-size:.65rem">🌐 Pública</span>'}`;
+    }
+
+    // Query
+    let query = sb.from('arquivos').select('*').eq('workspace_id', currentWorkspace.id);
+
+    if (pastaId === null) {
+        // Raiz: mostrar arquivos públicos + privados do próprio usuário
+        // sem filtro de pasta (mostra todos de todas as pastas + sem pasta)
+        // mas filtra visibilidade
+    } else {
+        query = query.eq('pasta_id', pastaId);
+    }
+
+    query = query.order('created_at', { ascending: false });
+    const { data: arquivos, error } = await query;
+
+    if (error) { grid.innerHTML = `<div class="ark-empty">⚠️ Erro: ${escH(error.message)}</div>`; return; }
+
+    // Filtro de visibilidade client-side
+    const visiveis = (arquivos || []).filter(f =>
+        f.visibilidade === 'publico' || f.criado_por === currentUser.id
+    );
+
+    if (!visiveis.length) {
+        grid.innerHTML = `<div class="ark-empty">
+            <div style="font-size:2.5rem;margin-bottom:10px">📭</div>
+            <div style="font-weight:600">Nenhum arquivo aqui</div>
+            <div style="font-size:.82rem;margin-top:4px">Clique em "⬆️ Upload" para adicionar arquivos.</div>
+        </div>`;
         return;
     }
 
-    // Agrupar por projeto
-    const grupos = {};
-    data.forEach(f => {
-        const key = f.projeto_id ? `projeto_${f.projeto_id}` : 'geral';
-        const label = f.projetos?.nome || 'Geral (sem projeto)';
-        if (!grupos[key]) grupos[key] = { label, items: [] };
-        grupos[key].items.push(f);
-    });
-
-    c.innerHTML = Object.values(grupos).map(g => `
-        <div style="margin-bottom:20px">
-            <div class="eventos-section-label">📁 ${escH(g.label)}</div>
-            ${g.items.map(f => {
-                const { data: urlData } = sb.storage.from('workspace-files').getPublicUrl(f.path);
-                const criador = wsMembers.find(u => u.id === f.criado_por);
-                return `<div class="file-list-item">
-                    <span class="file-icon">${fileIcon(f.nome)}</span>
-                    <div class="file-info">
-                        <div class="file-name">${escH(f.nome)}</div>
-                        <div class="file-date">${criador ? escH(criador.nome) + ' · ' : ''}${new Date(f.created_at).toLocaleDateString('pt-BR')}</div>
-                    </div>
-                    <div class="file-acts">
-                        <a href="${urlData.publicUrl}" target="_blank" class="btn btn-s btn-sm">Abrir</a>
-                        ${currentUserCanEdit ? `<button class="btn btn-sm" style="background:none;border:1px solid var(--danger);color:var(--danger)" onclick="deletarArquivo(${f.id},'${f.path}',null)">🗑</button>` : ''}
-                    </div>
-                </div>`;
-            }).join('')}
-        </div>
-    `).join('');
+    grid.innerHTML = `<div class="ark-file-grid">${visiveis.map(f => renderArkFileCard(f)).join('')}</div>`;
 }
 
+function renderArkFileCard(f) {
+    const { data: urlData } = sb.storage.from('workspace-files').getPublicUrl(f.path);
+    const url = urlData?.publicUrl || '#';
+    const criador = wsMembers.find(u => u.id === f.criado_por);
+    const isOwner = f.criado_por === currentUser.id;
+    const visClass = f.visibilidade === 'privado' ? 'ark-vis-priv' : 'ark-vis-pub';
+    const visLabel = f.visibilidade === 'privado' ? '🔒 Privado' : '🌐 Público';
+
+    const thumb = isImage(f.nome)
+        ? `<img src="${url}" alt="${escH(f.nome)}" loading="lazy" onerror="this.parentNode.innerHTML='${fileIcon(f.nome)}'">`
+        : fileIcon(f.nome);
+
+    return `<div class="ark-file-card" title="${escH(f.nome)}">
+        <div class="ark-file-thumb">
+            ${thumb}
+            <span class="ark-vis-badge ${visClass}">${visLabel}</span>
+        </div>
+        <div class="ark-file-body">
+            <div class="ark-file-name">${escH(f.nome)}</div>
+            <div class="ark-file-meta">${fmtBytes(f.tamanho)}${criador?' · '+escH(criador.nome):''}</div>
+            <div class="ark-file-meta">${new Date(f.created_at).toLocaleDateString('pt-BR')}</div>
+            <div style="display:flex;gap:5px;margin-top:7px;flex-wrap:wrap">
+                <a href="${url}" target="_blank" class="btn btn-s btn-sm" style="flex:1;font-size:.74rem;padding:5px 8px">Abrir</a>
+                ${isOwner && currentUserCanEdit ? `
+                <button class="btn btn-sm" style="padding:5px 7px;background:none;border:1px solid var(--border)" title="Mudar visibilidade" onclick="toggleVisArquivo(${f.id})">
+                    ${f.visibilidade==='privado'?'🌐':'🔒'}
+                </button>
+                <button class="btn btn-sm" style="padding:5px 7px;background:none;border:1px solid var(--danger);color:var(--danger)" onclick="deletarArquivo2(${f.id},'${f.path.replace(/'/g,"\\'")}')">🗑</button>` : ''}
+            </div>
+        </div>
+    </div>`;
+}
+
+async function toggleVisArquivo(arquivoId) {
+    // Buscar visibilidade atual
+    const { data: arq } = await sb.from('arquivos').select('visibilidade').eq('id', arquivoId).single();
+    const novaVis = arq?.visibilidade === 'publico' ? 'privado' : 'publico';
+    await sb.from('arquivos').update({ visibilidade: novaVis }).eq('id', arquivoId);
+    toast(novaVis === 'privado' ? '🔒 Arquivo agora é privado' : '🌐 Arquivo agora é público');
+    await renderArkFiles(arkPastaAtual);
+}
+
+async function deletarArquivo2(arquivoId, path) {
+    if (!confirm('Deletar este arquivo permanentemente?')) return;
+    await sb.storage.from('workspace-files').remove([path]);
+    await sb.from('arquivos').delete().eq('id', arquivoId);
+    await addLog('Deletou arquivo');
+    toast('Arquivo removido.');
+    await renderArkFiles(arkPastaAtual);
+}
+
+// Manter compatibilidade com upload dentro de projetos
 async function deletarArquivo(arquivoId, path, projetoId) {
     if (!confirm('Deletar este arquivo permanentemente?')) return;
     await sb.storage.from('workspace-files').remove([path]);
@@ -975,16 +1320,196 @@ async function deletarArquivo(arquivoId, path, projetoId) {
     await addLog('Deletou arquivo');
     toast('Arquivo removido.');
     if (projetoId) carregarArquivosProjeto(projetoId);
-    else carregarArquivosWorkspace();
+    else await renderArkFiles(arkPastaAtual);
 }
 
-// Popular o select de projetos na aba de arquivos
-function popularSelectProjetos() {
-    const sel = document.getElementById('ws-file-proj');
-    if (!sel) return;
-    sel.innerHTML = '<option value="">— Projeto (opcional) —</option>' +
-        wsProjetos.map(p => `<option value="${p.id}">${escH(p.nome)}</option>`).join('');
+// ─── MODAL: NOVA PASTA ────────────────────────────
+function abrirModalPasta(pastaId=null) {
+    const pasta = pastaId ? arkPastas.find(p=>p.id===pastaId) : null;
+    abrirModal(pasta?'✏️ Editar Pasta':'📁 Nova Pasta', `
+        <div class="fg"><label class="fl">Nome da pasta</label>
+            <input id="m-pasta-nome" class="fi" value="${escH(pasta?.nome||'')}" placeholder="Ex: Contratos, Designs..."/></div>
+        <div class="fg"><label class="fl">Visibilidade</label>
+            <select id="m-pasta-vis" class="fsel">
+                <option value="publico" ${(!pasta||pasta.visibilidade==='publico')?'selected':''}>🌐 Pública — todos os membros veem</option>
+                <option value="privado" ${pasta?.visibilidade==='privado'?'selected':''}>🔒 Privada — só você vê</option>
+            </select>
+            <p class="fhint">Pastas privadas e seus arquivos só aparecem para você.</p></div>
+    `, pasta ? [
+        { label: '💾 Salvar', cls: 'btn-p', action: `salvarEdicaoPasta(${pasta.id})` },
+        { label: '🗑 Deletar', cls: 'btn-s', style: 'border-color:var(--danger);color:var(--danger)', action: `deletarPasta(${pasta.id})` },
+        { label: 'Cancelar', cls: 'btn-s', action: 'fecharModal()' }
+    ] : [
+        { label: '+ Criar', cls: 'btn-p', action: 'criarPasta()' },
+        { label: 'Cancelar', cls: 'btn-s', action: 'fecharModal()' }
+    ]);
 }
+
+async function criarPasta() {
+    const nome = document.getElementById('m-pasta-nome')?.value?.trim();
+    const vis  = document.getElementById('m-pasta-vis')?.value || 'publico';
+    if (!nome) { toast('Informe o nome.', 'warning'); return; }
+    const { error } = await sb.from('pastas_arquivos').insert({
+        nome, visibilidade: vis, workspace_id: currentWorkspace.id, criado_por: currentUser.id
+    });
+    if (error) { toast('Erro: '+error.message, 'error'); return; }
+    await addLog(`Criou pasta: ${nome}`);
+    fecharModal(); toast('Pasta criada! 📁');
+    await carregarArquivosWorkspace();
+}
+
+async function salvarEdicaoPasta(pastaId) {
+    const nome = document.getElementById('m-pasta-nome')?.value?.trim();
+    const vis  = document.getElementById('m-pasta-vis')?.value || 'publico';
+    if (!nome) { toast('Informe o nome.', 'warning'); return; }
+    const { error } = await sb.from('pastas_arquivos').update({ nome, visibilidade: vis }).eq('id', pastaId);
+    if (error) { toast('Erro: '+error.message, 'error'); return; }
+    fecharModal(); toast('Pasta atualizada!');
+    await carregarArquivosWorkspace();
+    if (arkPastaAtual === pastaId) await renderArkFiles(pastaId);
+}
+
+async function deletarPasta(pastaId) {
+    if (!confirm('Deletar a pasta? Os arquivos dentro perderão a associação mas não serão excluídos.')) return;
+    await sb.from('arquivos').update({ pasta_id: null }).eq('pasta_id', pastaId);
+    await sb.from('pastas_arquivos').delete().eq('id', pastaId);
+    await addLog('Deletou pasta');
+    fecharModal(); toast('Pasta removida.');
+    if (arkPastaAtual === pastaId) arkPastaAtual = null;
+    await carregarArquivosWorkspace();
+}
+
+function menuPasta(pastaId) {
+    abrirModalPasta(pastaId);
+}
+
+// ─── MODAL: UPLOAD ────────────────────────────────
+function abrirModalUpload() {
+    const pastasOpts = arkPastas
+        .filter(p => p.visibilidade === 'publico' || p.criado_por === currentUser.id)
+        .map(p => `<option value="${p.id}" ${arkPastaAtual===p.id?'selected':''}>${escH(p.nome)} ${p.visibilidade==='privado'?'🔒':''}</option>`)
+        .join('');
+
+    abrirModal('⬆️ Upload de Arquivos', `
+        <div class="fg"><label class="fl">Arquivos</label>
+            <input id="m-upload-files" type="file" class="fi" multiple/></div>
+        <div class="fg"><label class="fl">Pasta de destino</label>
+            <select id="m-upload-pasta" class="fsel">
+                <option value="">📂 Sem pasta (raiz)</option>
+                ${pastasOpts}
+            </select></div>
+        <div class="fg"><label class="fl">Visibilidade dos arquivos</label>
+            <select id="m-upload-vis" class="fsel">
+                <option value="publico">🌐 Público — todos os membros veem</option>
+                <option value="privado">🔒 Privado — só você vê</option>
+            </select>
+            <p class="fhint">Arquivos privados só aparecem para você, independente da pasta.</p></div>
+        <div id="m-upload-progress" style="display:none;margin-top:8px">
+            <div style="height:6px;background:var(--border);border-radius:6px;overflow:hidden">
+                <div id="m-upload-bar" style="height:100%;background:linear-gradient(90deg,var(--acc),#10b981);border-radius:6px;width:0%;transition:width .3s"></div>
+            </div>
+            <div id="m-upload-status" style="font-size:.77rem;color:var(--muted);margin-top:5px;text-align:center"></div>
+        </div>
+    `, [
+        { label: '⬆️ Enviar', cls: 'btn-p', action: 'executarUpload()' },
+        { label: 'Cancelar', cls: 'btn-s', action: 'fecharModal()' }
+    ]);
+}
+
+async function executarUpload() {
+    const input   = document.getElementById('m-upload-files');
+    const pastaId = document.getElementById('m-upload-pasta')?.value || null;
+    const vis     = document.getElementById('m-upload-vis')?.value || 'publico';
+    const files   = Array.from(input?.files || []);
+    if (!files.length) { toast('Selecione ao menos um arquivo.', 'warning'); return; }
+
+    const progBar  = document.getElementById('m-upload-progress');
+    const bar      = document.getElementById('m-upload-bar');
+    const status   = document.getElementById('m-upload-status');
+    progBar.style.display = 'block';
+
+    let sucesso = 0, erros = 0;
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        status.textContent = `Enviando ${i+1}/${files.length}: ${file.name}`;
+        bar.style.width = `${Math.round((i/files.length)*100)}%`;
+
+        const slug = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
+        const filePath = `${currentWorkspace.id}/${pastaId ? `pasta_${pastaId}` : 'raiz'}/${slug}`;
+
+        const { error: upErr } = await sb.storage.from('workspace-files').upload(filePath, file);
+        if (upErr) { erros++; console.error(upErr); continue; }
+
+        const { error: dbErr } = await sb.from('arquivos').insert({
+            nome: file.name,
+            path: filePath,
+            pasta_id: pastaId ? parseInt(pastaId) : null,
+            workspace_id: currentWorkspace.id,
+            criado_por: currentUser.id,
+            visibilidade: vis,
+            tamanho: file.size
+        });
+        if (dbErr) { erros++; continue; }
+        sucesso++;
+    }
+
+    bar.style.width = '100%';
+    status.textContent = `${sucesso} enviado(s)${erros ? ', '+erros+' erro(s)' : ''}.`;
+
+    if (sucesso) await addLog(`Enviou ${sucesso} arquivo(s)`);
+    setTimeout(async () => {
+        fecharModal();
+        toast(sucesso ? `${sucesso} arquivo(s) enviado(s)! 📎` : 'Nenhum arquivo enviado.', sucesso ? 'success' : 'warning');
+        await carregarArquivosWorkspace();
+        if (pastaId) await navPasta(parseInt(pastaId));
+    }, 600);
+}
+
+// Upload de projeto (mantido compatível)
+async function uploadArquivoProjeto(projetoId) {
+    const input = document.getElementById(`proj-file-input-${projetoId}`);
+    const files = Array.from(input?.files || []);
+    if (!files.length) { toast('Selecione ao menos um arquivo.', 'warning'); return; }
+    let sucesso = 0, erros = 0;
+    for (const file of files) {
+        const filePath = `${currentWorkspace.id}/projetos/${projetoId}/${Date.now()}-${file.name}`;
+        const { error: upErr } = await sb.storage.from('workspace-files').upload(filePath, file);
+        if (upErr) { erros++; continue; }
+        await sb.from('arquivos').insert({
+            nome: file.name, path: filePath,
+            projeto_id: projetoId, workspace_id: currentWorkspace.id,
+            criado_por: currentUser.id, visibilidade: 'publico', tamanho: file.size
+        });
+        sucesso++;
+    }
+    input.value = '';
+    if (sucesso) { toast(`${sucesso} arquivo(s) enviado(s)!`); await addLog(`Enviou ${sucesso} arquivo(s) ao projeto #${projetoId}`); }
+    if (erros) toast(`${erros} falharam.`, 'error');
+    await carregarArquivosProjeto(projetoId);
+}
+
+// Carregar arquivos dentro de card de projeto
+async function carregarArquivosProjeto(projetoId) {
+    const container = document.getElementById(`proj-files-${projetoId}`);
+    if (!container) return;
+    const { data, error } = await sb.from('arquivos').select('*').eq('projeto_id', projetoId).order('created_at', { ascending: false });
+    if (error) { container.innerHTML = '<div style="font-size:.8rem;color:var(--danger)">Erro ao carregar.</div>'; return; }
+    if (!data?.length) { container.innerHTML = '<div style="font-size:.8rem;color:var(--muted);padding:4px 0">Nenhum arquivo ainda.</div>'; return; }
+    container.innerHTML = data.map(f => {
+        const { data: u } = sb.storage.from('workspace-files').getPublicUrl(f.path);
+        return `<div class="file-list-item">
+            <span class="file-icon">${fileIcon(f.nome)}</span>
+            <div class="file-info"><div class="file-name">${escH(f.nome)}</div><div class="file-date">${new Date(f.created_at).toLocaleDateString('pt-BR')}</div></div>
+            <div class="file-acts">
+                <a href="${u.publicUrl}" target="_blank" class="btn btn-s btn-sm">Abrir</a>
+                ${currentUserCanEdit?`<button class="btn btn-sm" style="background:none;border:1px solid var(--danger);color:var(--danger)" onclick="deletarArquivo(${f.id},'${f.path.replace(/'/g,"\\'")}',${projetoId})">🗑</button>`:''}
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// Manter compatibilidade com popularSelectProjetos (ainda usada no home)
+function popularSelectProjetos() {}
 
 // ─── HELPERS DE PRAZO ─────────────────────────────
 function prazoClass(prazo, status) {
